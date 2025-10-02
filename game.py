@@ -15,83 +15,71 @@ para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
 TO-DO:
 	- Dicionário para variaveis globais (deltaTime, screen, score)
 	- Implementar tempo "delta"
-	- Bola quica de forma gostosa no jogador (deixar movimento mais flúido)
+	- Rebate da bola depende de onde acertar no jogador
+	- Colisão com tijolo realista
 	- Cada linha de tijolo tem cor diferente
 	- Bola começar em cima do jogador
-	- Fases (levels) com tijolos (bricks) novos (sem ser velho) com mais (+) pontos (score)
+	- Fases com tijolos valendo mais pontos
+	- Sistema de vidas
 """
-
-from gamefuncs import *
+import gamefuncs
 import pygame 
 
 def main() -> None:
 	pygame.init()
 	
-	gameInfo: dict = {
-		"screen": None,
-		"delta": 0,
-		"score": 0,
-		"player": {
-			"shape": None,
-			"color": pygame.Color("white"),
-			"speed": 5
-		},
-		"ball":  {
-			"shape": None,
-			"color": pygame.Color("white"),
-			"speed": [5, -5]
-		},
-		"bricks": {
-			"list": None,
-			"grid": (8,5)
-		}
-	}
-
-	objSizes: dict = {
-		"screen": (600, 600),
-		"ball": (15, 15),
-		"player": (100, 15),
-		"brickGrid": (8, 5)
-	}
-
-	# Criar janela
-	gameInfo["screen"] = pygame.display.set_mode((600, 600))
+	screen = gamefuncs.newScreen(600, 600, "black")
 	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
+	game_state: dict = {
+		"deltaTime": 0,
+		"score": 0,
+		"level": 1,
+		"running": True,
+		"paused": False,
+	}
 
-	ballPosition: tuple = (gameInfo["screen"].get_width() // 2, gameInfo["screen"].get_height() - 70)
+	player = gamefuncs.newPlayer(
+		position=(screen["width"]//2, screen["height"]-50),
+		size=(100, 5),
+		color="white",
+		speed=5,
+	)
+	player_center: tuple = player["shape"].center
+	ball = gamefuncs.newBall(
+		center=(player_center[0], player_center[1]+10),
+		radius=10,
+		color="white",
+		speed=[5, -5],
+	)
+	bricks = gamefuncs.createBricks(
+		screen_size=(screen["width"], screen["height"]),
+		grid=(5,4),
+		spacing=5,
+		level=game_state["level"],
+		colors=["blue", "red", "yellow", "green"],
+	)
 
-	# Criar objetos
-	player = pygame.Rect((gameInfo["screen"].get_width() // 2 - objSizes["player"][0] // 2, gameInfo["screen"][1] - 50), objSizes["player"])
-	ball = pygame.Rect(ballPosition, objSizes["ball"])
-	bricks: list = createBricks(gameInfo["screen"], objSizes["brickGrid"])
+	while game_state["running"]:
+		#delta = pygame.clock.tick(60) / 1000.0 # em segundos; 60 FPS
 
-	# WARNING: ballMovement irá mudar durante o jogo, crie uma copia se preciso
-	playerSpeed: float = 5
-	ballMovement: list = [5, -5] # velocidade no eixo x e y
-
-	score   = 0
-	running = True
-	while running:
-		delta = pygame.clock.tick(60) / 1000.0 # em segundos; 60 FPS
-
-		clearScreen(screen)
-		drawObjects(screen, (player, "blue"), (ball, "white"), (bricks, "green"))
-		updateScoreText(screen, score)
+		gamefuncs.clearScreen(screen)
+		gamefuncs.drawObjects(screen, (player, "blue"), (ball, "white"), (bricks, "green"))
+		gamefuncs.updateScoreText(screen, game_state["score"])
 		
-		movePlayer(gameInfo["screen"], pygame.key.get_pressed(), player, playerSpeed)
+		gamefuncs.movePlayer(game_state["screen"], pygame.key.get_pressed(), player, player["speed"] playerSpeed)
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				running = False
 		#end_for
 
-		score, ballMovement = moveBall(gameInfo["screen"], ball, ballMovement, player, bricks, score)
+		game_state["score"], ballMovement =gamefuncs. moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
 		# Se bola encostou no "chao" ou não tem mais tijolo (game over / vitoria)
 		if (not ballMovement) or (not bricks):
 			running = False
 		
-		pygame.time.wait()
-		updateScreen()
+		pygame.time.wait(10)
+		gamefuncs.updateScreen()
 	#end_while
 
 	# Se pontuacao maxima tiver sido alcancada
