@@ -149,8 +149,43 @@ def move_ball(screen: dict, delta: float, ball: dict):
 
 def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 	ball_shape: pygame.Rect = ball["shape"]
+	player_shape: pygame.Rect = game_objs["player"]["shape"]
+	bricks: list = game_objs["bricks"]
 
-	...
+	if ball_shape.colliderect(player_shape):
+		# posição relativa do bola do centro do jogador
+		# escala de -1 a 1 quanto a essa distancia
+		hit_position: int = ball_shape.centerx - player_shape.centerx
+		scale: float = hit_position // (player_shape.width / 2)
+
+		ball["speed"][0] = ball["speed_original"] * scale
+		ball["speed"][1] *= -1
+		
+		#ball_shape.bottom = player_shape.bottom
+	else:
+		for brick in bricks.copy():
+			brick_shape: pygame.Rect = brick["shape"]
+
+			if ball_shape.colliderect(brick_shape):
+				# Quanto maior a velocidade
+				# Maior a chance de error
+				overlap_L: int = ball_shape.right - brick_shape.left
+				overlap_R: int = brick_shape.right - ball_shape.left
+				overlap_T: int = ball_shape.bottom - brick_shape.top
+				overlap_B: int = brick_shape.bottom - ball_shape.top
+
+				smallest = min(overlap_L, overlap_R, overlap_T, overlap_B)
+
+				if smallest == overlap_L or smallest == overlap_R:
+					ball["speed"][0] *= -1
+				else:
+					ball["speed"][1] *= -1
+
+				bricks.remove(brick)
+				game_state["score"] += game_state["level"]
+			#end_if
+		#end_for
+	#end_if
 #end_def
 
 def reset_ball(ball: dict, player: pygame.Rect):
