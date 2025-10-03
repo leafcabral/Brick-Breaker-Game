@@ -76,9 +76,9 @@ def create_bricks(
 		screen_size: tuple,
 		grid: tuple = (5,4),
 		spacing: int = 5,
-		colors: list = ["blue", "red", "yellow", "green"]) -> list:
+		colors: list = ["blue", "red", "yellow", "green"]) -> dict:
 	qtd_cores: int = len(colors)
-	bricks: list = []
+	brick_list: list = []
 
 	# Blocos vao até 1/4 da tela
 	size: tuple = (
@@ -97,7 +97,7 @@ def create_bricks(
 		color = colors[line % grid[1]]
 
 		for column in range(grid[0]):
-			bricks.append(new_brick(pos, size, color))
+			brick_list.append(new_brick(pos, size, color))
 
 			pos[0] += increment[0]
 		#end_for
@@ -105,6 +105,12 @@ def create_bricks(
 		pos[1] += increment[1]
 	#end_for
 
+	bricks: dict = {
+		"list": brick_list,
+		"grid": grid,
+		"spacing": spacing,
+		"colors": colors,
+	}
 	return bricks
 #end_def
 
@@ -198,38 +204,14 @@ def reset_ball(ball: dict, player: pygame.Rect):
 	ball["speed"] = ball["speed_original"]
 #end_def
 
-def move_ball_deprecated(
-		screen_size: tuple,
-		ball,
-		ballMovement: list,
-		player,
-		bricks: list,
-		score: int) -> tuple:
-	ball.x += ballMovement[0]
-	ball.y += ballMovement[1]
-
-	# Checa por colisao com as paredes e o teto
-	if (ball.x <= 0) or ((ball.x + ball.width) >= screen_size[0]):
-		ballMovement[0] *= -1
-	if (ball.y <= 0):
-		ballMovement[1] *= -1
-
-	# Checa por colisao com objetos
-	if player.colliderect(ball):
-		ballMovement[1] *= -1
-	for brick in bricks:
-		if brick.colliderect(ball):
-			bricks.remove(brick)
-			ballMovement[1] *= -1
-			score += 1
-		#end_if
-	#end_for
-		
-	# Checa se bola encostou no "chao"
-	if ((ball.y + ball.height) >= screen_size[1]):
-		ballMovement = []
-
-	return (score, ballMovement)
+def reset_bricks(screen_size: tuple, bricks: dict) -> dict:
+	return create_bricks(
+		screen_size,
+		bricks["grid"],
+		bricks["spacing"],
+		bricks["colors"],
+	)
+	...
 #end_def
 
 def render_screen(state: dict, screen: dict, obj: dict):

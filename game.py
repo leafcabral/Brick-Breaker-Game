@@ -54,7 +54,7 @@ def main() -> None:
 	game_objs: dict = {
 		"player": player,
 		"ball": ball,
-		"bricks": bricks,
+		"bricks": bricks["list"],
 	}
 
 	while game_state["running"]:
@@ -94,6 +94,16 @@ def main() -> None:
 				game_state["running"] = False
 		#end_if
 		
+		if not bricks:
+			gamefuncs.reset_bricks(
+				(screen["surface"].get_size()),
+				bricks
+			)
+			gamefuncs.reset_ball(ball, player["shape"])
+			game_state["level"] += 1
+			game_state["score"] += game_state["level"]
+		#end_if
+
 		gamefuncs.render_screen(game_state, screen, game_objs)
 	#end_while
 
