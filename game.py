@@ -53,7 +53,7 @@ def main() -> None:
 
 	game_objs: dict = {
 		"player": player,
-		"balls": [ball],
+		"ball": ball,
 		"bricks": bricks,
 	}
 

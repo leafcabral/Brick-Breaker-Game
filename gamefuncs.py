@@ -133,8 +133,8 @@ def move_ball(screen: dict, delta: float, ball: dict):
 	shape: pygame.Rect = ball["shape"]
 	screen_rect: pygame.Rect = screen["rect"]
 
-	shape.x += ball["speed"][0]
-	shape.y += ball["speed"][1]
+	shape.x += ball["speed"][0] * delta
+	shape.y += ball["speed"][1] * delta
 
 	if not is_rect_inside_screen(screen, shape):
 		if shape.left < screen_rect.left \
@@ -148,6 +148,8 @@ def move_ball(screen: dict, delta: float, ball: dict):
 #end_def
 
 def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
+	ball_shape: pygame.Rect = ball["shape"]
+
 	...
 #end_def
 
@@ -198,14 +200,13 @@ def move_ball_deprecated(
 def render_screen(state: dict, screen: dict, obj: dict):
 	surface = screen["surface"]
 	player = obj["player"]
-	balls = obj["balls"]
+	ball = obj["ball"]
 	bricks = obj["bricks"]
 
 	surface.fill(screen["bg_color"])
 
 	pygame.draw.rect(surface, player["color"], player["shape"])
-	for ball in balls:
-		pygame.draw.ellipse(surface, ball["color"], ball["shape"])
+	pygame.draw.ellipse(surface, ball["color"], ball["shape"])
 	for brick in bricks:
 		pygame.draw.rect(surface, brick["color"], brick["shape"])
 	
