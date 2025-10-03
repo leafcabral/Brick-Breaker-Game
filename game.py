@@ -43,7 +43,10 @@ def main() -> None:
 	}
 
 	player = gamefuncs.new_player(
-		(screen["surface"].width // 2, screen["surface"].height - 50)
+		position=(
+			screen["surface"].get_width() // 2, 
+			screen["surface"].get_height() - 50
+		)
 	)
 	ball = gamefuncs.new_ball(player["shape"], offset_y=-10)
 	bricks = gamefuncs.create_bricks(
@@ -62,10 +65,10 @@ def main() -> None:
 		key_pressed = pygame.key.get_pressed()
 		
 		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				game_state["running"] = False
-			elif key_pressed[pygame.K_p] \
+			if event.type == pygame.QUIT \
 					or key_pressed[pygame.K_ESCAPE]:
+				game_state["running"] = False
+			elif key_pressed[pygame.K_p]:
 				game_state["paused"] = not game_state["paused"]
 		#end_for
 
@@ -95,7 +98,7 @@ def main() -> None:
 		#end_if
 		
 		if not bricks:
-			gamefuncs.reset_bricks(
+			bricks = gamefuncs.reset_bricks(
 				(screen["surface"].get_size()),
 				bricks
 			)
@@ -108,6 +111,7 @@ def main() -> None:
 	#end_while
 
 	print(f"Score: {game_state["score"]}")
+	print(f"Level: {game_state["level"]}")
 	pygame.quit()
 #end_def
 

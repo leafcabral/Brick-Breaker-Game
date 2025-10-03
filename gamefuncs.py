@@ -30,9 +30,9 @@ def new_screen(
 
 def new_player(
 		position: tuple,
-		size: tuple = (100, 5),
+		size: tuple = (100, 20),
 		color: str = "white",
-		speed: float = 5) -> dict:
+		speed: float = 400) -> dict:
 	return {
 		"shape": pygame.Rect(position, size),
 		"color": pygame.Color(color),
@@ -44,7 +44,7 @@ def new_ball(
 		player: pygame.Rect,
 		radius: float = 10,
 		color: str = "white",
-		speed: list = [5, -5],
+		speed: list = [300, -300],
 		offset_x: int = 0,
 		offset_y: int = 0) -> dict:
 	topLeftCorner: tuple = (
@@ -58,7 +58,7 @@ def new_ball(
 		"color": pygame.Color(color),
 		"offset_x": offset_x,
 		"offset_y": offset_y,
-		"speed_original": speed,
+		"speed_original": speed.copy(),
 		"speed": speed,
 	}
 
@@ -74,7 +74,7 @@ def new_brick(position: list, size: tuple, color: str) -> dict:
 
 def create_bricks(
 		screen_size: tuple,
-		grid: tuple = (5,4),
+		grid: tuple = (4, 8),
 		spacing: int = 5,
 		colors: list = ["blue", "red", "yellow", "green"]) -> dict:
 	qtd_cores: int = len(colors)
@@ -91,7 +91,7 @@ def create_bricks(
 		spacing + size[1],
 	)
 	
-	pos: list = [spacing, spacing]
+	pos: list = [spacing, spacing + 20]
 	for line in range(grid[1]):
 		# Usa-se modulo para repetir a lista caso grid > lista
 		color = colors[line % grid[1]]
@@ -126,9 +126,9 @@ def move_player(screen: dict, delta: float, player: dict, keys):
 	shape: pygame.Rect = player["shape"]
 	pos_increment: int = int(player["speed"] * delta)
 	
-	if keys[pygame.K_RIGHT]:
+	if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
 		shape.x += pos_increment
-	if keys[pygame.K_LEFT]:
+	if keys[pygame.K_LEFT] or keys[pygame.K_a]:
 		shape.x -= pos_increment
 
 	if not is_rect_inside_screen(screen, shape):
@@ -164,7 +164,7 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 		hit_position: int = ball_shape.centerx - player_shape.centerx
 		scale: float = hit_position // (player_shape.width / 2)
 
-		ball["speed"][0] = ball["speed_original"] * scale
+		ball["speed"][0] = ball["speed_original"][0] * scale
 		ball["speed"][1] *= -1
 		
 		#ball_shape.bottom = player_shape.bottom
@@ -228,10 +228,10 @@ def render_screen(state: dict, screen: dict, obj: dict):
 		pygame.draw.rect(surface, brick["color"], brick["shape"])
 	
 	font = pygame.font.Font(None, 30)
-	txt_color = pygame.Color("white")
-	score = font.render(f"Score: {state['score']}", True, txt_color)
-	lives = font.render(f"Lives: {state['lives']}", True, txt_color)
-	surface.blit(score, (0, screen["height"] - 20))
+	txt_color = pygame.Color("yellow")
+	score = font.render(f"Score: {state["score"]}", True, txt_color)
+	lives = font.render(f"Lives: {state["lives"]}", True, txt_color)
+	surface.blit(score, (0, surface.get_height() - 20))
 	surface.blit(lives, (0, 0))
 
 	pygame.display.flip()
