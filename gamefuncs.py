@@ -15,19 +15,26 @@ para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
 """
 import pygame
 
-def newScreen(width: int, height: int, bgColor: str) -> dict:
+def newScreen(
+		width: int = 600,
+		height: int = 600,
+		bg_color: str = "black") -> dict:
 	surface = pygame.display.set_mode((width, height))
 	screen: dict = {
 		"surface": surface,
 		"width": width,
 		"height": height,
-		"bg_color": pygame.Color(bgColor),
+		"bg_color": pygame.Color(bg_color),
 	}
 
 	return screen
 #end_def
 
-def newPlayer(position: tuple, size: tuple, color: str, speed: float) -> dict:
+def newPlayer(
+		position: tuple,
+		size: tuple = (100, 5),
+		color: str = "white",
+		speed: float = 5) -> dict:
 	return {
 		"shape": pygame.Rect(position, size),
 		"position": position,
@@ -37,7 +44,11 @@ def newPlayer(position: tuple, size: tuple, color: str, speed: float) -> dict:
 	}
 #end_def
 
-def newBall(center: tuple, radius: float, color: str, speed: list) -> dict:
+def newBall(
+		center: tuple,
+		radius: float = 10,
+		color: str = "white",
+		speed: list = [5, -5]) -> dict:
 	topLeftCorner: tuple = (center[0] - radius, center[1] - radius)
 	diameter: float = radius*2
 
@@ -64,10 +75,10 @@ def newBrick(position: list, size: tuple, color: str, score: int) -> dict:
 
 def createBricks(
 		screen_size: tuple,
-		grid: tuple,
-		spacing: int,
-		level: int,
-		colors: list) -> list:
+		grid: tuple = (5,4),
+		spacing: int = 5,
+		level: int = 1,
+		colors: list = ["blue", "red", "yellow", "green"]) -> list:
 	qtd_cores: int = len(colors)
 	bricks: list = []
 

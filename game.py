@@ -42,24 +42,16 @@ def main() -> None:
 	}
 
 	player = gamefuncs.newPlayer(
-		position=(screen["width"]//2, screen["height"]-50),
-		size=(100, 5),
-		color="white",
-		speed=5,
+		(screen["width"] // 2, screen["height"] - 50)
 	)
 	player_center: tuple = player["shape"].center
 	ball = gamefuncs.newBall(
-		center=(player_center[0], player_center[1]+10),
-		radius=10,
-		color="white",
-		speed=[5, -5],
+		(player_center[0], player_center[1] + 10)
 	)
 	bricks = gamefuncs.createBricks(
 		screen_size=(screen["width"], screen["height"]),
 		grid=(5,4),
-		spacing=5,
 		level=game_state["level"],
-		colors=["blue", "red", "yellow", "green"],
 	)
 
 	game_obj: dict = {
