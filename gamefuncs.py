@@ -13,7 +13,6 @@ Além disso, também foi feita mudanças gerais no código, visando maior legibi
 dade e performance, foi mudada a checagem de tecla pressionado por event.type
 para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
 """
-from turtle import color
 import pygame
 
 def newScreen(width: int, height: int, bgColor: str) -> dict:
@@ -55,7 +54,6 @@ def newBall(center: tuple, radius: float, color: str, speed: list) -> dict:
 	return ball
 #end_def
 
-
 def newBrick(position: list, size: tuple, color: str, score: int) -> dict:
 	return {
 		"shape": pygame.Rect(position, size),
@@ -63,7 +61,6 @@ def newBrick(position: list, size: tuple, color: str, score: int) -> dict:
 		"score": score,
 	}
 #end_def
-
 
 def createBricks(
 		screen_size: tuple,
@@ -102,21 +99,6 @@ def createBricks(
 	return bricks
 #end_def
 
-def clearScreen(screen):
-	screen.fill(pygame.Color("black"))
-#end_def
-
-def updateScreen():
-	pygame.display.flip()
-#end_def
-
-def drawObjects(screen, player: tuple, ball: tuple, bricks: tuple):
-	pygame.draw.rect(screen, pygame.Color(player[1]), player[0])
-	pygame.draw.ellipse(screen, pygame.Color(ball[1]), ball[0])
-	for brick in bricks[0]:
-		pygame.draw.rect(screen, pygame.Color(bricks[1]), brick)
-#end_def
-
 def movePlayer(screenSize: tuple, keys, player, speed: float):
 	if keys[pygame.K_RIGHT] and (player.x + player.width) < screenSize[0]:
 		player.x += speed
@@ -153,8 +135,32 @@ def moveBall(screenSize: tuple, ball, ballMovement: list, player, bricks: list, 
 	return (score, ballMovement)
 #end_def
 
-def updateScoreText(screen, score):
+
+def renderScreen(state: dict, screen: dict, obj: dict):
+	surface = screen["surface"]
+	player = obj["player"]
+	balls = obj["ball"]
+	bricks = obj["bricks"]
+
+	surface.fill(screen["bg_color"])
+
+	pygame.draw.rect(surface, player["color"], player["shape"])
+	for ball in balls:
+		pygame.draw.circle(
+			surface,
+			ball["color"],
+			ball["center"],
+			ball["radius"]
+		)
+	for brick in bricks:
+		pygame.draw.rect(surface, brick["color"], brick["shape"])
+	
 	font = pygame.font.Font(None, 30)
-	text = font.render(f"Iscóri: {score}", True, pygame.Color("cyan"))
-	screen.blit(text, (0, screen.get_height() - 20))
+	txt_color = pygame.Color("white")
+	score = font.render(f"Score: {state["score"]}", True, txt_color)
+	lives = font.render(f"Lives: {state["lives"]}", True, txt_color)
+	surface.blit(score, (0, screen["height"] - 20))
+	surface.blit(lives, (0, 0))
+
+	pygame.display.flip()
 #end_def

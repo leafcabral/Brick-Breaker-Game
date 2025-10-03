@@ -13,14 +13,14 @@ Além disso, também foi feita mudanças gerais no código, visando maior legibi
 dade e performance, foi mudada a checagem de tecla pressionado por event.type
 para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
 TO-DO:
-	- Dicionário para variaveis globais (deltaTime, screen, score)
-	- Implementar tempo "delta"
-	- Rebate da bola depende de onde acertar no jogador
-	- Colisão com tijolo realista
-	- Cada linha de tijolo tem cor diferente
-	- Bola começar em cima do jogador
-	- Fases com tijolos valendo mais pontos
-	- Sistema de vidas
+	- [X] Dicionário para variaveis globais (deltaTime, screen, score)
+	- [ ] Implementar tempo "delta"
+	- [ ] Rebate da bola depende de onde acertar no jogador
+	- [ ] Colisão com tijolo realista
+	- [X] Cada linha de tijolo tem cor diferente
+	- [X] Bola começar em cima do jogador
+	- [ ] Fases com tijolos valendo mais pontos
+	- [ ] Sistema de vidas
 """
 import gamefuncs
 import pygame 
@@ -28,10 +28,13 @@ import pygame
 def main() -> None:
 	pygame.init()
 	
+	# relogio para calcular delta time
+	clock = pygame.time.Clock()
 	screen = gamefuncs.newScreen(600, 600, "black")
 	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
 	game_state: dict = {
-		"deltaTime": 0,
+		"delta": 0,
+		"lives": 3,
 		"score": 0,
 		"level": 1,
 		"running": True,
@@ -59,35 +62,35 @@ def main() -> None:
 		colors=["blue", "red", "yellow", "green"],
 	)
 
-	while game_state["running"]:
-		#delta = pygame.clock.tick(60) / 1000.0 # em segundos; 60 FPS
+	game_obj: dict = {
+		"player": player,
+		"balls": [ball],
+		"bricks": bricks,
+	}
 
-		gamefuncs.clearScreen(screen)
-		gamefuncs.drawObjects(screen, (player, "blue"), (ball, "white"), (bricks, "green"))
-		gamefuncs.updateScoreText(screen, game_state["score"])
-		
-		gamefuncs.movePlayer(game_state["screen"], pygame.key.get_pressed(), player, player["speed"] playerSpeed)
+	while game_state["running"]:
+		game_state["delta"] = clock.tick(60) / 1_000
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				running = False
+				game_state["running"] = False
 		#end_for
 
-		game_state["score"], ballMovement =gamefuncs. moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
+		gamefuncs.movePlayer(
+			game_state["screen"],
+			pygame.key.get_pressed(),
+			player,
+			player["speed"],
+		)
+		game_state["score"], ballMovement = gamefuncs.moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
 		# Se bola encostou no "chao" ou não tem mais tijolo (game over / vitoria)
 		if (not ballMovement) or (not bricks):
-			running = False
+			game_state["running"] = False
 		
-		pygame.time.wait(10)
-		gamefuncs.updateScreen()
+		gamefuncs.renderScreen(game_state, screen, game_obj)
 	#end_while
 
-	# Se pontuacao maxima tiver sido alcancada
-	if not bricks:
-		print("\nYOU WIN!")
-	else:
-		print("\nGAME OVER :(")
-
+	print(f"Score: {game_state["score"]}")
 	pygame.quit()
 #end_def
 
