@@ -45,15 +45,13 @@ def main() -> None:
 	player = gamefuncs.new_player(
 		(screen["surface"].width // 2, screen["surface"].height - 50)
 	)
-	ball = gamefuncs.new_ball(
-		(player["shape"].centerx, player["shape"].centery - 10)
-	)
+	ball = gamefuncs.new_ball(player["shape"], offset_y=-10)
 	bricks = gamefuncs.create_bricks(
 		screen_size=(screen["surface"].get_size()),
 		grid=(5,4),
 	)
 
-	game_obj: dict = {
+	game_objs: dict = {
 		"player": player,
 		"balls": [ball],
 		"bricks": bricks,
@@ -71,26 +69,32 @@ def main() -> None:
 				game_state["paused"] = not game_state["paused"]
 		#end_for
 
-		if not game_state["paused"]:
-			gamefuncs.move_player(
-				screen["surface"].get_size(),
-				game_state["delta"],
-				player,
-				key_pressed
-			)
+		if game_state["paused"]:
+			continue
 
-			gamefuncs.move_ball(
-				screen["surface"].get_size(),
-				game_state,
-				ball,
-				game_obj
-			)
+		gamefuncs.move_player(
+			screen,
+			game_state["delta"],
+			player,
+			key_pressed
+		)
+		gamefuncs.move_ball(
+			screen,
+			game_state["delta"],
+			ball
+		)
+		gamefuncs.handle_ball_collisions(game_state, ball, game_objs)
 
-			if game_state["lives"] <= 0:
+		if not gamefuncs.is_rect_inside_screen(screen, ball["shape"]):
+			game_state["lives"] -= 1
+
+			if game_state["lives"] > 0:
+				gamefuncs.reset_ball(ball, player["shape"])
+			else:
 				game_state["running"] = False
 		#end_if
 		
-		gamefuncs.render_screen(game_state, screen, game_obj)
+		gamefuncs.render_screen(game_state, screen, game_objs)
 	#end_while
 
 	print(f"Score: {game_state["score"]}")

@@ -21,6 +21,7 @@ def new_screen(
 	surface = pygame.display.set_mode((width, height))
 	screen: dict = {
 		"surface": surface,
+		"rect": surface.get_rect(),
 		"bg_color": pygame.Color(bg_color),
 	}
 
@@ -40,17 +41,24 @@ def new_player(
 #end_def
 
 def new_ball(
-		center: tuple,
+		player: pygame.Rect,
 		radius: float = 10,
 		color: str = "white",
-		speed: list = [5, -5]) -> dict:
-	topLeftCorner: tuple = (center[0] - radius, center[1] - radius)
+		speed: list = [5, -5],
+		offset_x: int = 0,
+		offset_y: int = 0) -> dict:
+	topLeftCorner: tuple = (
+		player.centerx - radius + offset_x,
+		player.centery - radius + offset_y
+	)
 	diameter: float = radius*2
 
 	ball: dict = {
 		"shape": pygame.Rect(topLeftCorner, (diameter, diameter)),
-		"radius": radius,
 		"color": pygame.Color(color),
+		"offset_x": offset_x,
+		"offset_y": offset_y,
+		"speed_original": speed,
 		"speed": speed,
 	}
 
@@ -100,33 +108,57 @@ def create_bricks(
 	return bricks
 #end_def
 
-def is_rect_inside_screen(screen_size: tuple, rect: pygame.Rect) -> bool:
-	left_right: bool = rect.x > 0 \
-		and rect.x + rect.width < screen_size[0]
-	top_bottom: bool = rect.y > 0 \
-		and rect.y + rect.height < screen_size[1]
-	
-	return left_right and top_bottom
+def is_rect_inside_screen(screen: dict, rect: pygame.Rect) -> bool:
+	return screen["rect"].contains(rect)
 #end_def
 
-def move_player(screen_size: tuple, delta: float, player: dict, keys):
+def clamp_rect_to_screen(screen: dict, rect: pygame.Rect):
+	rect.clamp_ip(screen["rect"])
+#end_def
+
+def move_player(screen: dict, delta: float, player: dict, keys):
 	shape: pygame.Rect = player["shape"]
 	pos_increment: int = int(player["speed"] * delta)
 	
-	if (is_rect_inside_screen(screen_size, shape)):
-		if keys[pygame.K_RIGHT]:
-			shape.x += pos_increment
-		if keys[pygame.K_LEFT]:
-			shape.x -= pos_increment
+	if keys[pygame.K_RIGHT]:
+		shape.x += pos_increment
+	if keys[pygame.K_LEFT]:
+		shape.x -= pos_increment
+
+	if not is_rect_inside_screen(screen, shape):
+		clamp_rect_to_screen(screen, shape)
 #end_def
 
-def move_ball(
-		screen_size: tuple,
-		game_state: dict,
-		ball: dict,
-		game_obj: dict):
-	
+def move_ball(screen: dict, delta: float, ball: dict):
+	shape: pygame.Rect = ball["shape"]
+	screen_rect: pygame.Rect = screen["rect"]
+
+	shape.x += ball["speed"][0]
+	shape.y += ball["speed"][1]
+
+	if not is_rect_inside_screen(screen, shape):
+		if shape.left < screen_rect.left \
+				or shape.right > screen_rect.right:
+			ball["speed"][0] *= -1
+		elif shape.top < screen_rect.top:
+			ball["speed"][1] *= -1
+		
+		clamp_rect_to_screen(screen, shape)
+	#end_if
+#end_def
+
+def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 	...
+#end_def
+
+def reset_ball(ball: dict, player: pygame.Rect):
+	shape: pygame.Rect = ball["shape"]
+
+	shape.center = (
+		player.centerx + ball["offset_x"],
+		player.centery + ball["offset_y"]
+	)
+	ball["speed"] = ball["speed_original"]
 #end_def
 
 def move_ball_deprecated(
@@ -173,12 +205,7 @@ def render_screen(state: dict, screen: dict, obj: dict):
 
 	pygame.draw.rect(surface, player["color"], player["shape"])
 	for ball in balls:
-		pygame.draw.circle(
-			surface,
-			ball["color"],
-			ball["center"],
-			ball["radius"]
-		)
+		pygame.draw.ellipse(surface, ball["color"], ball["shape"])
 	for brick in bricks:
 		pygame.draw.rect(surface, brick["color"], brick["shape"])
 	
