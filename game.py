@@ -5,13 +5,14 @@ ASMbleia
 	Rafael Cabral Lopes
 	Vitor Felberg Barcelos
 Serra, Brasil
-Recriação do jogo Brick Breakr extremamente simples em python pela biblioteca
-pygame, seguindo o tutorial [https://www.youtube.com/watch?v=h0fKGPW_cxw], foi
-feito a mudança das váriaveis de escopo global para escopo de função,
-adicionando também parametros para as funções, quando necessário.
-Além disso, também foi feita mudanças gerais no código, visando maior legibili-
-dade e performance, foi mudada a checagem de tecla pressionado por event.type
-para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
+Recriação simples do jogo Brick Breaker em python utilizando a  biblioteca
+pygame, usando como base o tutorial da Hashtag Programação, presente no link 
+[https://www.youtube.com/watch?v=h0fKGPW_cxw]. Além da mudança das váriaveis
+globais para escopo de função, modificando as funções, quando necessário, foram
+feitos diversas mudanças para deixar o jogo e o código melhor em diversos
+aspectos.
+"""
+"""
 TO-DO:
 	- [X] Dicionário para variaveis globais (deltaTime, screen, score)
 	- [ ] Implementar tempo "delta"
@@ -30,7 +31,7 @@ def main() -> None:
 	
 	# relogio para calcular delta time
 	clock = pygame.time.Clock()
-	screen = gamefuncs.newScreen(600, 600, "black")
+	screen = gamefuncs.new_screen(600, 600, "black")
 	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
 	game_state: dict = {
 		"delta": 0,
@@ -41,17 +42,15 @@ def main() -> None:
 		"paused": False,
 	}
 
-	player = gamefuncs.newPlayer(
-		(screen["width"] // 2, screen["height"] - 50)
+	player = gamefuncs.new_player(
+		(screen["surface"].width // 2, screen["surface"].height - 50)
 	)
-	player_center: tuple = player["shape"].center
-	ball = gamefuncs.newBall(
-		(player_center[0], player_center[1] + 10)
+	ball = gamefuncs.new_ball(
+		(player["shape"].centerx, player["shape"].centery - 10)
 	)
-	bricks = gamefuncs.createBricks(
-		screen_size=(screen["width"], screen["height"]),
+	bricks = gamefuncs.create_bricks(
+		screen_size=(screen["surface"].get_size()),
 		grid=(5,4),
-		level=game_state["level"],
 	)
 
 	game_obj: dict = {
@@ -62,25 +61,36 @@ def main() -> None:
 
 	while game_state["running"]:
 		game_state["delta"] = clock.tick(60) / 1_000
+		key_pressed = pygame.key.get_pressed()
 		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				game_state["running"] = False
+			elif key_pressed[pygame.K_p] \
+					or key_pressed[pygame.K_ESCAPE]:
+				game_state["paused"] = not game_state["paused"]
 		#end_for
 
-		gamefuncs.movePlayer(
-			screen,
-			game_state,
-			player,
-			pygame.key.get_pressed()
-		)
+		if not game_state["paused"]:
+			gamefuncs.move_player(
+				screen["surface"].get_size(),
+				game_state["delta"],
+				player,
+				key_pressed
+			)
+
+			gamefuncs.move_ball(
+				screen["surface"].get_size(),
+				game_state,
+				ball,
+				game_obj
+			)
+
+			if game_state["lives"] <= 0:
+				game_state["running"] = False
+		#end_if
 		
-		game_state["score"], ball["speed"] = gamefuncs.moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
-		# Se bola encostou no "chao" ou não tem mais tijolo (game over / vitoria)
-		if (not ball["speed"]) or (not bricks):
-			game_state["running"] = False
-		
-		gamefuncs.renderScreen(game_state, screen, game_obj)
+		gamefuncs.render_screen(game_state, screen, game_obj)
 	#end_while
 
 	print(f"Score: {game_state["score"]}")

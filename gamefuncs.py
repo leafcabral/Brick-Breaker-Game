@@ -5,46 +5,41 @@ ASMbleia
 	Rafael Cabral Lopes
 	Vitor Felberg Barcelos
 Serra, Brasil
-Recriação do jogo Brick Breakr extremamente simples em python pela biblioteca
-pygame, seguindo o tutorial [https://www.youtube.com/watch?v=h0fKGPW_cxw], foi
-feito a mudança das váriaveis de escopo global para escopo de função, adicio-
-nando também parametros para as funções, quando necessário.
-Além disso, também foi feita mudanças gerais no código, visando maior legibili-
-dade e performance, foi mudada a checagem de tecla pressionado por event.type
-para pygame.key.get_pressed(), pois o primeiro estava dando diversos problemas
+Recriação simples do jogo Brick Breaker em python utilizando a  biblioteca
+pygame, usando como base o tutorial da Hashtag Programação, presente no link 
+[https://www.youtube.com/watch?v=h0fKGPW_cxw]. Além da mudança das váriaveis
+globais para escopo de função, modificando as funções, quando necessário, foram
+feitos diversas mudanças para deixar o jogo e o código melhor em diversos
+aspectos.
 """
 import pygame
 
-def newScreen(
+def new_screen(
 		width: int = 600,
 		height: int = 600,
 		bg_color: str = "black") -> dict:
 	surface = pygame.display.set_mode((width, height))
 	screen: dict = {
 		"surface": surface,
-		"width": width,
-		"height": height,
 		"bg_color": pygame.Color(bg_color),
 	}
 
 	return screen
 #end_def
 
-def newPlayer(
+def new_player(
 		position: tuple,
 		size: tuple = (100, 5),
 		color: str = "white",
 		speed: float = 5) -> dict:
 	return {
 		"shape": pygame.Rect(position, size),
-		"position": position,
-		"size": size,
 		"color": pygame.Color(color),
 		"speed": speed,
 	}
 #end_def
 
-def newBall(
+def new_ball(
 		center: tuple,
 		radius: float = 10,
 		color: str = "white",
@@ -54,10 +49,7 @@ def newBall(
 
 	ball: dict = {
 		"shape": pygame.Rect(topLeftCorner, (diameter, diameter)),
-		"position": topLeftCorner,
-		"center": center,
 		"radius": radius,
-		"size": (radius, radius),
 		"color": pygame.Color(color),
 		"speed": speed,
 	}
@@ -65,19 +57,17 @@ def newBall(
 	return ball
 #end_def
 
-def newBrick(position: list, size: tuple, color: str, score: int) -> dict:
+def new_brick(position: list, size: tuple, color: str) -> dict:
 	return {
 		"shape": pygame.Rect(position, size),
 		"color": pygame.Color(color),
-		"score": score,
 	}
 #end_def
 
-def createBricks(
+def create_bricks(
 		screen_size: tuple,
 		grid: tuple = (5,4),
 		spacing: int = 5,
-		level: int = 1,
 		colors: list = ["blue", "red", "yellow", "green"]) -> list:
 	qtd_cores: int = len(colors)
 	bricks: list = []
@@ -99,7 +89,7 @@ def createBricks(
 		color = colors[line % grid[1]]
 
 		for column in range(grid[0]):
-			bricks.append(newBrick(pos, size, color, level))
+			bricks.append(new_brick(pos, size, color))
 
 			pos[0] += increment[0]
 		#end_for
@@ -110,28 +100,47 @@ def createBricks(
 	return bricks
 #end_def
 
-def movePlayer(screen: dict, game_state: dict, player: dict, keys):
-	player_x: int = player["shape"].x
-	player_speed: float = player["speed"]
-	delta: float = game_state["delta"]
-
-	inside_screen: bool = player_x > 0 \
-		or player_x + player["size"][0] < screen["width"]
-	pos_increment: float = player_speed * delta
+def is_rect_inside_screen(screen_size: tuple, rect: pygame.Rect) -> bool:
+	left_right: bool = rect.x > 0 \
+		and rect.x + rect.width < screen_size[0]
+	top_bottom: bool = rect.y > 0 \
+		and rect.y + rect.height < screen_size[1]
 	
-	if (inside_screen):
-		if keys[pygame.K_RIGHT]:
-			player["shape"].x += pos_increment
-		if keys[pygame.K_LEFT]:
-			player["shape"].x -= pos_increment
+	return left_right and top_bottom
 #end_def
 
-def moveBall(screenSize: tuple, ball, ballMovement: list, player, bricks: list, score: int) -> tuple:
+def move_player(screen_size: tuple, delta: float, player: dict, keys):
+	shape: pygame.Rect = player["shape"]
+	pos_increment: int = int(player["speed"] * delta)
+	
+	if (is_rect_inside_screen(screen_size, shape)):
+		if keys[pygame.K_RIGHT]:
+			shape.x += pos_increment
+		if keys[pygame.K_LEFT]:
+			shape.x -= pos_increment
+#end_def
+
+def move_ball(
+		screen_size: tuple,
+		game_state: dict,
+		ball: dict,
+		game_obj: dict):
+	
+	...
+#end_def
+
+def move_ball_deprecated(
+		screen_size: tuple,
+		ball,
+		ballMovement: list,
+		player,
+		bricks: list,
+		score: int) -> tuple:
 	ball.x += ballMovement[0]
 	ball.y += ballMovement[1]
 
 	# Checa por colisao com as paredes e o teto
-	if (ball.x <= 0) or ((ball.x + ball.width) >= screenSize[0]):
+	if (ball.x <= 0) or ((ball.x + ball.width) >= screen_size[0]):
 		ballMovement[0] *= -1
 	if (ball.y <= 0):
 		ballMovement[1] *= -1
@@ -148,16 +157,16 @@ def moveBall(screenSize: tuple, ball, ballMovement: list, player, bricks: list, 
 	#end_for
 		
 	# Checa se bola encostou no "chao"
-	if ((ball.y + ball.height) >= screenSize[1]):
+	if ((ball.y + ball.height) >= screen_size[1]):
 		ballMovement = []
 
 	return (score, ballMovement)
 #end_def
 
-def renderScreen(state: dict, screen: dict, obj: dict):
+def render_screen(state: dict, screen: dict, obj: dict):
 	surface = screen["surface"]
 	player = obj["player"]
-	balls = obj["ball"]
+	balls = obj["balls"]
 	bricks = obj["bricks"]
 
 	surface.fill(screen["bg_color"])
@@ -175,8 +184,8 @@ def renderScreen(state: dict, screen: dict, obj: dict):
 	
 	font = pygame.font.Font(None, 30)
 	txt_color = pygame.Color("white")
-	score = font.render(f"Score: {state["score"]}", True, txt_color)
-	lives = font.render(f"Lives: {state["lives"]}", True, txt_color)
+	score = font.render(f"Score: {state['score']}", True, txt_color)
+	lives = font.render(f"Lives: {state['lives']}", True, txt_color)
 	surface.blit(score, (0, screen["height"] - 20))
 	surface.blit(lives, (0, 0))
 
