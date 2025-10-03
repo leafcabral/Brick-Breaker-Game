@@ -69,14 +69,15 @@ def main() -> None:
 		#end_for
 
 		gamefuncs.movePlayer(
-			game_state["screen"],
-			pygame.key.get_pressed(),
+			screen,
+			game_state,
 			player,
-			player["speed"],
+			pygame.key.get_pressed()
 		)
-		game_state["score"], ballMovement = gamefuncs.moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
+		
+		game_state["score"], ball["speed"] = gamefuncs.moveBall(game_state["screen"], ball, ball["speed"], player, bricks, game_state["score"])
 		# Se bola encostou no "chao" ou não tem mais tijolo (game over / vitoria)
-		if (not ballMovement) or (not bricks):
+		if (not ball["speed"]) or (not bricks):
 			game_state["running"] = False
 		
 		gamefuncs.renderScreen(game_state, screen, game_obj)

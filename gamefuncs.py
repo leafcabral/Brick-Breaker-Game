@@ -110,12 +110,20 @@ def createBricks(
 	return bricks
 #end_def
 
-def movePlayer(screenSize: tuple, keys, player, speed: float):
-	if keys[pygame.K_RIGHT] and (player.x + player.width) < screenSize[0]:
-		player.x += speed
-	if keys[pygame.K_LEFT] and player.x > 0:
-		player.x -= speed
-	#end_match
+def movePlayer(screen: dict, game_state: dict, player: dict, keys):
+	player_x: int = player["shape"].x
+	player_speed: float = player["speed"]
+	delta: float = game_state["delta"]
+
+	inside_screen: bool = player_x > 0 \
+		or player_x + player["size"][0] < screen["width"]
+	pos_increment: float = player_speed * delta
+	
+	if (inside_screen):
+		if keys[pygame.K_RIGHT]:
+			player["shape"].x += pos_increment
+		if keys[pygame.K_LEFT]:
+			player["shape"].x -= pos_increment
 #end_def
 
 def moveBall(screenSize: tuple, ball, ballMovement: list, player, bricks: list, score: int) -> tuple:
@@ -145,7 +153,6 @@ def moveBall(screenSize: tuple, ball, ballMovement: list, player, bricks: list, 
 
 	return (score, ballMovement)
 #end_def
-
 
 def renderScreen(state: dict, screen: dict, obj: dict):
 	surface = screen["surface"]
