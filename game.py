@@ -51,7 +51,7 @@ def main() -> None:
 	ball = gamefuncs.new_ball(player["shape"], offset_y=-10)
 	bricks = gamefuncs.create_bricks(
 		screen_size=(screen["surface"].get_size()),
-		grid=(5,4),
+		grid=(1,4),
 	)
 
 	game_objs: dict = {
@@ -97,8 +97,8 @@ def main() -> None:
 				game_state["running"] = False
 		#end_if
 		
-		if not bricks:
-			bricks = gamefuncs.reset_bricks(
+		if not bricks["list"]:
+			gamefuncs.reset_bricks(
 				(screen["surface"].get_size()),
 				bricks
 			)

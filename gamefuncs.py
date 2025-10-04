@@ -74,24 +74,31 @@ def new_brick(position: list, size: tuple, color: str) -> dict:
 
 def create_bricks(
 		screen_size: tuple,
-		grid: tuple = (4, 8),
+		grid: tuple = (7, 4),
 		spacing: int = 5,
-		colors: list = ["blue", "red", "yellow", "green"]) -> dict:
-	qtd_cores: int = len(colors)
+		padding: tuple = (70, 50),
+		colors: list = [
+			"dodgerblue", # blue
+			"firebrick", # red
+			"gold3", # yellow
+			"green4" # green
+		]
+		) -> dict:
 	brick_list: list = []
 
-	# Blocos vao até 1/4 da tela
+	# Blocos vao até 1/3 da altura da tela
+	valid_area: pygame.Rect = pygame.Rect(
+		padding,
+		(screen_size[0] - padding[0]*2, screen_size[1]//3 - padding[1]),
+	)
 	size: tuple = (
-		(screen_size[0] - spacing) // grid[0] - spacing,
-		((screen_size[1] // 4) - spacing) // grid[1] - spacing,
+		(valid_area.width // grid[0]) - spacing,
+		(valid_area.height // grid[1]) - spacing,
 	)
 
-	increment: tuple = (
-		spacing + size[0],
-		spacing + size[1],
-	)
-	
-	pos: list = [spacing, spacing + 20]
+	increment: tuple = (spacing + size[0], spacing + size[1])
+	pos: list = list(valid_area.topleft)
+
 	for line in range(grid[1]):
 		# Usa-se modulo para repetir a lista caso grid > lista
 		color = colors[line % grid[1]]
@@ -101,7 +108,8 @@ def create_bricks(
 
 			pos[0] += increment[0]
 		#end_for
-			
+
+		pos[0] = valid_area.left			
 		pos[1] += increment[1]
 	#end_for
 
@@ -109,6 +117,7 @@ def create_bricks(
 		"list": brick_list,
 		"grid": grid,
 		"spacing": spacing,
+		"padding": padding,
 		"colors": colors,
 	}
 	return bricks
@@ -204,14 +213,14 @@ def reset_ball(ball: dict, player: pygame.Rect):
 	ball["speed"] = ball["speed_original"]
 #end_def
 
-def reset_bricks(screen_size: tuple, bricks: dict) -> dict:
-	return create_bricks(
+def reset_bricks(screen_size: tuple, bricks: dict):
+	bricks["list"] = create_bricks(
 		screen_size,
 		bricks["grid"],
 		bricks["spacing"],
+		bricks["padding"],
 		bricks["colors"],
-	)
-	...
+	)["list"]
 #end_def
 
 def render_screen(state: dict, screen: dict, obj: dict):
