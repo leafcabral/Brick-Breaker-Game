@@ -5,7 +5,7 @@ Recriação do jogo Brick Breaker em python utilizando a biblioteca pygame, insp
 ## Sobre o Projeto
 Foi usado como base inicial esse [tutorial da Hashtag Programação](https://www.youtube.com/watch?v=h0fKGPW_cxw). Além da mudança pedidas pela professora (mudar váriaveis globais para escopo de função, modificando as funções, quando necessário), foram feitos diversas mudanças para deixar o jogo e o código melhor em diversos aspectos.
 
-## Sobre Nõs
+## Sobre Nós
 Esse projeto foi feito pela ASMbleia, sétima (7ª) equipe de desenvolvimento da disciplina de Programação IV do Curso de Informática para Internet, módulo (semestre) 4.
 Os integrantes são:
 	- Ian Caliel Matos Cabral
