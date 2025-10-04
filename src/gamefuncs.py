@@ -303,14 +303,15 @@ def _render_texts(
 	lives_txt: pygame.Surface = font.render(lives, True, color)
 	level_txt: pygame.Surface = font.render(level, True, color)
 
-	base_positionx: int = 45
+	base_positiony: int = 10
+	base_positionx: int = 55
 	score_positionx: int = base_positionx
 	lives_positionx: int = base_positionx + (surface.get_width() // 3)
 	level_positionx: int = base_positionx + (2 * surface.get_width() // 3)
 	
-	surface.blit(score_txt, (score_positionx, 0))
-	surface.blit(lives_txt, (lives_positionx, 0))
-	surface.blit(level_txt, (level_positionx, 0))
+	surface.blit(score_txt, (score_positionx, base_positiony))
+	surface.blit(lives_txt, (lives_positionx, base_positiony))
+	surface.blit(level_txt, (level_positionx, base_positiony))
 #end_def
 
 def _render_overley(
