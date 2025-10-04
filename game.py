@@ -15,15 +15,15 @@ aspectos.
 """
 TO-DO:
 	- [X] Dicionário para variaveis globais (deltaTime, screen, score)
-	- [ ] Implementar tempo "delta"
-	- [ ] Rebate da bola depende de onde acertar no jogador
+	- [X] Implementar tempo "delta"
+	- [X] Rebate da bola depende de onde acertar no jogador
 	- [ ] Colisão com tijolo realista
 	- [X] Cada linha de tijolo tem cor diferente
 	- [X] Bola começar em cima do jogador
-	- [ ] Fases com tijolos valendo mais pontos
-	- [ ] Sistema de vidas
+	- [X] Fases com tijolos valendo mais pontos
+	- [X] Sistema de vidas
 """
-import gamefuncs
+import gamefuncs as gf
 import pygame 
 
 def main() -> None:
@@ -31,83 +31,88 @@ def main() -> None:
 	
 	# relogio para calcular delta time
 	clock = pygame.time.Clock()
-	screen = gamefuncs.new_screen(600, 600, "black")
+	screen = gf.new_screen(600, 600, "black")
 	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
-	game_state: dict = {
-		"delta": 0,
-		"lives": 3,
-		"score": 0,
-		"level": 1,
-		"running": True,
-		"paused": False,
-	}
+	game_state: dict = gf.new_game_state()
 
-	player = gamefuncs.new_player(
-		position=(
-			screen["surface"].get_width() // 2, 
-			screen["surface"].get_height() - 50
-		)
-	)
-	ball = gamefuncs.new_ball(player["shape"], offset_y=-10)
-	bricks = gamefuncs.create_bricks(
-		screen_size=(screen["surface"].get_size()),
-		grid=(1,4),
-	)
+	player = gf.new_player(screen["surface"].get_size())
+	ball = gf.new_ball(player["shape"])
+	bricks = gf.create_bricks((screen["surface"].get_size()))
 
 	game_objs: dict = {
 		"player": player,
 		"ball": ball,
-		"bricks": bricks["list"],
+		"bricks": bricks,
 	}
 
+	brick_respawn_delay: float = 1
 	while game_state["running"]:
 		game_state["delta"] = clock.tick(60) / 1_000
 		key_pressed = pygame.key.get_pressed()
 		
 		for event in pygame.event.get():
-			if event.type == pygame.QUIT \
-					or key_pressed[pygame.K_ESCAPE]:
+			if event.type == pygame.QUIT:
 				game_state["running"] = False
 			elif key_pressed[pygame.K_p]:
 				game_state["paused"] = not game_state["paused"]
 		#end_for
 
-		if game_state["paused"]:
+		if game_state["game_over"]:
+			if key_pressed[pygame.K_ESCAPE]:
+				game_state["running"] = False
+			elif key_pressed[pygame.K_r]:
+				game_state["game_over"] = False
+				print(f"Score: {game_state["score"]}")
+				print(f"Level: {game_state["level"]}")
+				gf.reset_game_state(game_state)
+				gf.reset_ball(ball, player["shape"])
+				gf.reset_bricks(
+					screen["surface"].get_size(),
+					bricks
+				)
+		elif game_state["paused"]:
+			if key_pressed[pygame.K_ESCAPE]:
+				game_state["running"] = False
+			
+		if game_state["paused"] or game_state["game_over"]:
+			gf.render_screen(game_state, screen, game_objs)
 			continue
 
-		gamefuncs.move_player(
+		gf.move_player(
 			screen,
 			game_state["delta"],
 			player,
 			key_pressed
 		)
-		gamefuncs.move_ball(
+		gf.move_ball(
 			screen,
 			game_state["delta"],
 			ball
 		)
-		gamefuncs.handle_ball_collisions(game_state, ball, game_objs)
+		gf.handle_ball_collisions(game_state, ball, game_objs)
 
-		if not gamefuncs.is_rect_inside_screen(screen, ball["shape"]):
+		if not gf.is_rect_inside_screen(screen, ball["shape"]):
 			game_state["lives"] -= 1
 
 			if game_state["lives"] > 0:
-				gamefuncs.reset_ball(ball, player["shape"])
+				gf.reset_ball(ball, player["shape"])
 			else:
-				game_state["running"] = False
+				game_state["game_over"] = True
 		#end_if
 		
 		if not bricks["list"]:
-			gamefuncs.reset_bricks(
-				(screen["surface"].get_size()),
-				bricks
-			)
-			gamefuncs.reset_ball(ball, player["shape"])
-			game_state["level"] += 1
-			game_state["score"] += game_state["level"]
+			if brick_respawn_delay <= 0:
+				gf.reset_bricks(
+					(screen["surface"].get_size()),
+					bricks
+				)
+				game_state["level"] += 1
+				brick_respawn_delay = 1
+			else:
+				brick_respawn_delay -= game_state["delta"]
 		#end_if
 
-		gamefuncs.render_screen(game_state, screen, game_objs)
+		gf.render_screen(game_state, screen, game_objs)
 	#end_while
 
 	print(f"Score: {game_state["score"]}")

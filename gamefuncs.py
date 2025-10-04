@@ -14,6 +14,18 @@ aspectos.
 """
 import pygame
 
+def new_game_state(lives: int = 3):
+	return {
+		"delta": 0,
+		"lives": lives,
+		"score": 0,
+		"level": 1,
+		"running": True,
+		"game_over": False,
+		"paused": False,
+	}
+#end_def
+
 def new_screen(
 		width: int = 600,
 		height: int = 600,
@@ -29,10 +41,15 @@ def new_screen(
 #end_def
 
 def new_player(
-		position: tuple,
+		screen_size: tuple,
 		size: tuple = (100, 20),
 		color: str = "white",
 		speed: float = 400) -> dict:
+	position: tuple = (
+		(screen_size[0] - size[0]) // 2,
+		screen_size[1] - 50 - size[1]
+	)
+
 	return {
 		"shape": pygame.Rect(position, size),
 		"color": pygame.Color(color),
@@ -46,7 +63,7 @@ def new_ball(
 		color: str = "white",
 		speed: list = [300, -300],
 		offset_x: int = 0,
-		offset_y: int = 0) -> dict:
+		offset_y: int = -10) -> dict:
 	topLeftCorner: tuple = (
 		player.centerx - radius + offset_x,
 		player.centery - radius + offset_y
@@ -155,25 +172,25 @@ def move_ball(screen: dict, delta: float, ball: dict):
 		if shape.left < screen_rect.left \
 				or shape.right > screen_rect.right:
 			ball["speed"][0] *= -1
+			clamp_rect_to_screen(screen, shape)
 		elif shape.top < screen_rect.top:
 			ball["speed"][1] *= -1
-		
-		clamp_rect_to_screen(screen, shape)
+			clamp_rect_to_screen(screen, shape)
 	#end_if
 #end_def
 
 def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 	ball_shape: pygame.Rect = ball["shape"]
 	player_shape: pygame.Rect = game_objs["player"]["shape"]
-	bricks: list = game_objs["bricks"]
+	bricks: list = game_objs["bricks"]["list"]
 
 	if ball_shape.colliderect(player_shape):
 		# posição relativa do bola do centro do jogador
 		# escala de -1 a 1 quanto a essa distancia
-		hit_position: int = ball_shape.centerx - player_shape.centerx
-		scale: float = hit_position // (player_shape.width / 2)
+		hit_position: float = ball_shape.centerx - player_shape.centerx
+		scale: float = hit_position / (float(player_shape.width) / 2)
 
-		ball["speed"][0] = ball["speed_original"][0] * scale
+		ball["speed"][0] = ball["speed_original"][0] * scale * 2
 		ball["speed"][1] *= -1
 		
 		#ball_shape.bottom = player_shape.bottom
@@ -203,45 +220,131 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 	#end_if
 #end_def
 
-def reset_ball(ball: dict, player: pygame.Rect):
-	shape: pygame.Rect = ball["shape"]
+def reset_game_state(game_state: dict):
+	temp: dict = new_game_state(game_state["lives"])
+	game_state.clear()
+	game_state.update(temp)
+#end_def
 
-	shape.center = (
-		player.centerx + ball["offset_x"],
-		player.centery + ball["offset_y"]
+def reset_ball(ball: dict, player: pygame.Rect):
+	temp: dict = new_ball(
+		player,
+		radius=ball["shape"].width / 2,
+		color=ball["color"],
+		speed=ball["speed_original"],
+		offset_x=ball["offset_x"],
+		offset_y=ball["offset_y"] - 10
 	)
-	ball["speed"] = ball["speed_original"]
+
+	ball.clear()
+	ball.update(temp)
 #end_def
 
 def reset_bricks(screen_size: tuple, bricks: dict):
-	bricks["list"] = create_bricks(
+	temp = create_bricks(
 		screen_size,
 		bricks["grid"],
 		bricks["spacing"],
 		bricks["padding"],
 		bricks["colors"],
-	)["list"]
+	)
+
+	bricks.clear()
+	bricks.update(temp)
 #end_def
 
-def render_screen(state: dict, screen: dict, obj: dict):
-	surface = screen["surface"]
-	player = obj["player"]
-	ball = obj["ball"]
-	bricks = obj["bricks"]
-
-	surface.fill(screen["bg_color"])
+def _render_objects(surface: pygame.Surface, objs: dict):
+	player = objs["player"]
+	ball = objs["ball"]
+	bricks = objs["bricks"]
 
 	pygame.draw.rect(surface, player["color"], player["shape"])
 	pygame.draw.ellipse(surface, ball["color"], ball["shape"])
-	for brick in bricks:
+	for brick in bricks["list"]:
 		pygame.draw.rect(surface, brick["color"], brick["shape"])
+#end_def
+
+def _render_texts(
+		surface: pygame.Surface,
+		game_state: dict,
+		color: pygame.Color = pygame.Color("yellow")):
+	font: pygame.font.Font = pygame.font.Font(None, 30)
+
+	score: str = f"Score: {game_state["score"]}"
+	lives: str = f"Lives: {game_state["lives"]}"
+	level: str = f"Level: {game_state["level"]}"
+
+	score_txt: pygame.Surface = font.render(score, True, color)
+	lives_txt: pygame.Surface = font.render(lives, True, color)
+	level_txt: pygame.Surface = font.render(level, True, color)
+
+	base_positionx: int = 45
+	score_positionx: int = base_positionx
+	lives_positionx: int = base_positionx + (surface.get_width() // 3)
+	level_positionx: int = base_positionx + (2 * surface.get_width() // 3)
 	
-	font = pygame.font.Font(None, 30)
-	txt_color = pygame.Color("yellow")
-	score = font.render(f"Score: {state["score"]}", True, txt_color)
-	lives = font.render(f"Lives: {state["lives"]}", True, txt_color)
-	surface.blit(score, (0, surface.get_height() - 20))
-	surface.blit(lives, (0, 0))
+	surface.blit(score_txt, (score_positionx, 0))
+	surface.blit(lives_txt, (lives_positionx, 0))
+	surface.blit(level_txt, (level_positionx, 0))
+#end_def
+
+def _render_overley(
+		surface: pygame.Surface,
+		title: str,
+		subtitle: str = "",
+		color: pygame.Color = pygame.Color("yellow")):
+	title_font: pygame.font.Font = pygame.font.Font(None, 50)
+	subtitle_font: pygame.font.Font = pygame.font.Font(None, 30)
+
+	title_txt: pygame.Surface = title_font.render(title, True, color)
+	subtitle_txt: pygame.Surface = subtitle_font.render(
+		subtitle,
+		True,
+		color
+	)
+
+	title_rect: pygame.Rect = title_txt.get_rect()
+	subtitle_rect: pygame.Rect = subtitle_txt.get_rect()
+
+	screen_center = surface.get_rect().center
+	title_rect.center = screen_center
+	subtitle_rect.center = screen_center
+	subtitle_rect.centery += 30
+
+	overlay: pygame.Surface = pygame.Surface(
+		surface.get_size(),
+		pygame.SRCALPHA # overlay transparente
+	)
+	bg_color: pygame.Color = pygame.Color("grey25")
+	bg_color.a = 127
+	overlay.fill(bg_color)
+
+	surface.blit(overlay, (0,0))
+	surface.blit(title_txt, title_rect)
+	surface.blit(subtitle_txt, subtitle_rect)
+#end_def
+
+def render_screen(game_state: dict, screen: dict, objs: dict):
+	surface: pygame.Surface = screen["surface"]
+
+	surface.fill(screen["bg_color"])
+
+	_render_objects(surface, objs)
+	_render_texts(surface, game_state)
+
+	leave: str = "Press ESC to leave or "
+	if game_state["paused"]:
+		_render_overley(
+			surface,
+			"Game Paused",
+			leave + "Press P to unpause"
+		)
+	if game_state["game_over"]:
+		_render_overley(
+			surface,
+			"Game Over",
+			leave + "R to restart"
+		)
 
 	pygame.display.flip()
 #end_def
