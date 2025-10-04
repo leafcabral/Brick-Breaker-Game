@@ -5,23 +5,12 @@ ASMbleia
 	Rafael Cabral Lopes
 	Vitor Felberg Barcelos
 Serra, Brasil
-Recriação simples do jogo Brick Breaker em python utilizando a  biblioteca
+Recriação simples do jogo Brick Breaker em python utilizando a biblioteca
 pygame, usando como base o tutorial da Hashtag Programação, presente no link 
 [https://www.youtube.com/watch?v=h0fKGPW_cxw]. Além da mudança das váriaveis
 globais para escopo de função, modificando as funções, quando necessário, foram
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
-"""
-"""
-TO-DO:
-	- [X] Dicionário para variaveis globais (deltaTime, screen, score)
-	- [X] Implementar tempo "delta"
-	- [X] Rebate da bola depende de onde acertar no jogador
-	- [ ] Colisão com tijolo realista
-	- [X] Cada linha de tijolo tem cor diferente
-	- [X] Bola começar em cima do jogador
-	- [X] Fases com tijolos valendo mais pontos
-	- [X] Sistema de vidas
 """
 import gamefuncs as gf
 import pygame 
@@ -53,26 +42,14 @@ def main() -> None:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				game_state["running"] = False
-			elif key_pressed[pygame.K_p]:
-				game_state["paused"] = not game_state["paused"]
-		#end_for
-
-		if game_state["game_over"]:
-			if key_pressed[pygame.K_ESCAPE]:
-				game_state["running"] = False
-			elif key_pressed[pygame.K_r]:
-				game_state["game_over"] = False
-				print(f"Score: {game_state["score"]}")
-				print(f"Level: {game_state["level"]}")
-				gf.reset_game_state(game_state)
-				gf.reset_ball(ball, player["shape"])
-				gf.reset_bricks(
-					screen["surface"].get_size(),
-					bricks
+			elif event.type == pygame.KEYDOWN:
+				gf.handle_keydown(
+					screen,
+					event,
+					game_state,
+					game_objs
 				)
-		elif game_state["paused"]:
-			if key_pressed[pygame.K_ESCAPE]:
-				game_state["running"] = False
+		#end_for
 			
 		if game_state["paused"] or game_state["game_over"]:
 			gf.render_screen(game_state, screen, game_objs)
@@ -84,11 +61,7 @@ def main() -> None:
 			player,
 			key_pressed
 		)
-		gf.move_ball(
-			screen,
-			game_state["delta"],
-			ball
-		)
+		gf.move_ball(screen, game_state["delta"], ball)
 		gf.handle_ball_collisions(game_state, ball, game_objs)
 
 		if not gf.is_rect_inside_screen(screen, ball["shape"]):

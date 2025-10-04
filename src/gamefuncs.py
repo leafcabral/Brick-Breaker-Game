@@ -14,10 +14,10 @@ aspectos.
 """
 import pygame
 
-def new_game_state(lives: int = 3):
+def new_game_state():
 	return {
 		"delta": 0,
-		"lives": lives,
+		"lives": 3,
 		"score": 0,
 		"level": 1,
 		"running": True,
@@ -140,6 +140,31 @@ def create_bricks(
 	return bricks
 #end_def
 
+def handle_keydown(
+		screen: dict,
+		event: pygame.event.Event,
+		state: dict,
+		objs: dict):
+	match event.key:
+		case pygame.K_ESCAPE | pygame.K_p:
+			state["paused"] = not state["paused"]
+		case pygame.K_r:
+			if state["game_over"]:
+				print(f"Score: {state["score"]}")
+				print(f"Level: {state["level"]}")
+
+				reset_game_state(state)
+				reset_ball(objs["ball"], objs["player"]["shape"])
+				reset_bricks(
+					screen["surface"].get_size(),
+					objs["bricks"]
+				)
+				
+		case pygame.K_q:
+			if state["game_over"] or state["paused"]:
+				state["running"] = False
+#end_def
+
 def is_rect_inside_screen(screen: dict, rect: pygame.Rect) -> bool:
 	return screen["rect"].contains(rect)
 #end_def
@@ -221,7 +246,7 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 #end_def
 
 def reset_game_state(game_state: dict):
-	temp: dict = new_game_state(game_state["lives"])
+	temp: dict = new_game_state()
 	game_state.clear()
 	game_state.update(temp)
 #end_def
@@ -332,7 +357,7 @@ def render_screen(game_state: dict, screen: dict, objs: dict):
 	_render_objects(surface, objs)
 	_render_texts(surface, game_state)
 
-	leave: str = "Press ESC to leave or "
+	leave: str = "Press Q to leave or "
 	if game_state["paused"]:
 		_render_overley(
 			surface,
