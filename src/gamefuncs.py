@@ -13,6 +13,7 @@ feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
 import pygame
+from os import path
 
 def new_game_state():
 	return {
@@ -283,35 +284,40 @@ def _render_objects(surface: pygame.Surface, objs: dict):
 	ball = objs["ball"]
 	bricks = objs["bricks"]
 
-	pygame.draw.rect(surface, player["color"], player["shape"])
+	pygame.draw.rect(surface, player["color"], player["shape"], border_radius=5)
 	pygame.draw.ellipse(surface, ball["color"], ball["shape"])
 	for brick in bricks["list"]:
-		pygame.draw.rect(surface, brick["color"], brick["shape"])
+		pygame.draw.rect(surface, brick["color"], brick["shape"], border_radius=5)
 #end_def
 
 def _render_texts(
 		surface: pygame.Surface,
 		game_state: dict,
-		color: pygame.Color = pygame.Color("yellow")):
-	font: pygame.font.Font = pygame.font.Font(None, 30)
+		color: pygame.Color = pygame.Color("white")):
+	font_path: str = path.join("assets", "fonts")
+	font_name: str = path.join(font_path, "Photonico-Current-Regular.ttf")
+	lives_font: pygame.font.Font = pygame.font.Font(font_name, 40)
+	score_font: pygame.font.Font = pygame.font.Font(font_name, 25)
 
-	score: str = f"Score: {game_state["score"]}"
-	lives: str = f"Lives: {game_state["lives"]}"
-	level: str = f"Level: {game_state["level"]}"
+	lives: pygame.Surface = lives_font.render(
+		"☻"*game_state["lives"] + "☺"*(3-game_state["lives"]),
+		True, color
+	)
+	score: pygame.Surface = score_font.render(
+		f"{game_state["score"]:05}",
+		True, color
+	)
 
-	score_txt: pygame.Surface = font.render(score, True, color)
-	lives_txt: pygame.Surface = font.render(lives, True, color)
-	level_txt: pygame.Surface = font.render(level, True, color)
+	# Centraliza a pontuação
+	score_rect: pygame.Rect = score.get_rect()
+	score_rect.centerx = surface.get_rect().centerx
+	score_rect.y = surface.get_height() - score_rect.height - 10
+	# Coloca vida na mesma posicao y da pontuacao
+	lives_rect: pygame.Rect = lives.get_rect()
+	lives_rect.centery = score_rect.centery
 
-	base_positiony: int = 10
-	base_positionx: int = 55
-	score_positionx: int = base_positionx
-	lives_positionx: int = base_positionx + (surface.get_width() // 3)
-	level_positionx: int = base_positionx + (2 * surface.get_width() // 3)
-	
-	surface.blit(score_txt, (score_positionx, base_positiony))
-	surface.blit(lives_txt, (lives_positionx, base_positiony))
-	surface.blit(level_txt, (level_positionx, base_positiony))
+	surface.blit(lives, (12, score_rect.y - 5))
+	surface.blit(score, score_rect)
 #end_def
 
 def _render_overley(
