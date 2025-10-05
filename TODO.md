@@ -3,7 +3,7 @@
 ## Jogabilidade
 - [ ] Normalizar velocidade da bola
 - [ ] Melhorar quicada da bola no tijolo
-- [ ] Melhorar quicada da bola no jogador
+- [X] Melhorar quicada da bola no jogador
 - [ ] Apertar ↑ ou W para lançar bola
 - [ ] Ao invés de niveis, linhas de tijolos vão decendo com o tempo
 - [ ] ...
@@ -12,10 +12,10 @@
 - [ ] Sinalizar aumento da pontuação (ex.: mostrar +1 por 2 seg)
 - [ ] Menu de iniciar
 - [ ] Melhorar HUD e UI
-- [ ] Mudar icone do aplicativo
+- [X] Mudar icone do aplicativo
 - [ ] Adicionar sprites
 - [ ] Particulas de colisão
-- [ ] Mudar fonte da HUD
+- [X] Mudar fonte da HUD
 - [ ] ...
 
 ## Código
