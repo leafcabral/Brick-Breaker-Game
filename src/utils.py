@@ -1,0 +1,40 @@
+"""
+ASMbleia
+	Ian Caliel Matos Cabral
+	João Paulo Pipper da Silva
+	Rafael Cabral Lopes
+	Vitor Felberg Barcelos
+Serra, Brasil
+Recriação simples do jogo Brick Breaker em python utilizando a biblioteca
+pygame, usando como base o tutorial da Hashtag Programação, presente no link 
+[https://www.youtube.com/watch?v=h0fKGPW_cxw]. Além da mudança das váriaveis
+globais para escopo de função, modificando as funções, quando necessário, foram
+feitos diversas mudanças para deixar o jogo e o código melhor em diversos
+aspectos.
+"""
+import pygame
+from os.path import join as join_dirs
+
+def get_asset(dir_name: str, file_name: str) -> str:
+	return join_dirs("assets", dir_name, file_name)
+#end_def
+
+def get_main_font() -> str:
+	return get_asset("fonts", "Photonico-Current-Regular.ttf")
+#end_def
+
+def get_icon() -> str:
+	return get_asset("images", "icon.jpg")
+#end_def
+
+def get_title() -> str:
+	return "Brick Breaker: ASMbleia\'s edition"
+#end_def
+
+def get_background_color() -> pygame.Color:
+	return pygame.Color("gray19")
+#end_def
+
+def get_main_color() -> pygame.Color:
+	return pygame.Color("white")
+#end_def

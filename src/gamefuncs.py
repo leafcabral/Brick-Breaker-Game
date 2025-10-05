@@ -13,137 +13,8 @@ feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
 import pygame
-from os.path import join as join_dirs
-
-def get_asset(dir_name: str, file_name: str) -> str:
-	return join_dirs("assets", dir_name, file_name)
-#end_def
-
-def new_game_state():
-	return {
-		"delta": 0,
-		"lives": 3,
-		"score": 0,
-		"level": 1,
-		"running": True,
-		"game_over": False,
-		"paused": False,
-	}
-#end_def
-
-def new_screen(
-		width: int = 600,
-		height: int = 600,
-		bg_color: str = "black") -> dict:
-	surface = pygame.display.set_mode((width, height))
-	screen: dict = {
-		"surface": surface,
-		"rect": surface.get_rect(),
-		"bg_color": pygame.Color(bg_color),
-	}
-
-	return screen
-#end_def
-
-def new_player(
-		screen_size: tuple,
-		size: tuple = (100, 20),
-		color: str = "white",
-		speed: float = 400) -> dict:
-	position: tuple = (
-		(screen_size[0] - size[0]) // 2,
-		screen_size[1] - 50 - size[1]
-	)
-
-	return {
-		"shape": pygame.Rect(position, size),
-		"color": pygame.Color(color),
-		"speed": speed,
-	}
-#end_def
-
-def new_ball(
-		player: pygame.Rect,
-		radius: float = 10,
-		color: str = "white",
-		speed: list = [300, -300],
-		offset_x: int = 0,
-		offset_y: int = -10) -> dict:
-	topLeftCorner: tuple = (
-		player.centerx - radius + offset_x,
-		player.centery - radius + offset_y
-	)
-	diameter: float = radius*2
-
-	ball: dict = {
-		"shape": pygame.Rect(topLeftCorner, (diameter, diameter)),
-		"color": pygame.Color(color),
-		"offset_x": offset_x,
-		"offset_y": offset_y,
-		"speed_original": speed.copy(),
-		"speed": speed,
-	}
-
-	return ball
-#end_def
-
-def new_brick(position: list, size: tuple, color: str) -> dict:
-	return {
-		"shape": pygame.Rect(position, size),
-		"color": pygame.Color(color),
-	}
-#end_def
-
-def create_bricks(
-		screen_size: tuple,
-		grid: tuple = (7, 4),
-		spacing: int = 5,
-		padding: tuple = (70, 50),
-		colors: list = [
-			"dodgerblue", # blue
-			"firebrick", # red
-			"gold3", # yellow
-			"green4" # green
-		]
-		) -> dict:
-	brick_list: list = []
-
-	# Blocos vao até 1/3 da altura da tela
-	valid_area: pygame.Rect = pygame.Rect(
-		padding,
-		(screen_size[0] - padding[0]*2, screen_size[1]//3 - padding[1]),
-	)
-	size: tuple = (
-		(valid_area.width // grid[0]) - spacing,
-		(valid_area.height // grid[1]) - spacing,
-	)
-
-	increment: tuple = (spacing + size[0], spacing + size[1])
-	pos: list = list(valid_area.topleft)
-
-	for line in range(grid[1]):
-		# Usa-se modulo para repetir a lista caso grid > lista
-		color = colors[line % grid[1]]
-
-		for column in range(grid[0]):
-			brick_list.append(new_brick(pos, size, color))
-
-			pos[0] += increment[0]
-		#end_for
-
-		pos[0] = valid_area.left			
-		pos[1] += increment[1]
-	#end_for
-
-	bricks: dict = {
-		"list": brick_list,
-		"grid": grid,
-		"spacing": spacing,
-		"padding": padding,
-		"colors": colors,
-	}
-	return bricks
-#end_def
+import utils
+import game
 
 def handle_keydown(
 		screen: dict,
@@ -158,11 +29,11 @@ def handle_keydown(
 				print(f"Score: {state["score"]}")
 				print(f"Level: {state["level"]}")
 
-				reset_game_state(state)
-				reset_ball(objs["ball"], objs["player"]["shape"])
-				reset_bricks(
+				game.reset_game_state(state)
+				game.reset_ball(objs)
+				game.reset_bricks(
 					screen["surface"].get_size(),
-					objs["bricks"]
+					objs
 				)
 				
 		case pygame.K_q:
@@ -250,39 +121,6 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 	#end_if
 #end_def
 
-def reset_game_state(game_state: dict):
-	temp: dict = new_game_state()
-	game_state.clear()
-	game_state.update(temp)
-#end_def
-
-def reset_ball(ball: dict, player: pygame.Rect):
-	temp: dict = new_ball(
-		player,
-		radius=ball["shape"].width / 2,
-		color=ball["color"],
-		speed=ball["speed_original"],
-		offset_x=ball["offset_x"],
-		offset_y=ball["offset_y"] - 10
-	)
-
-	ball.clear()
-	ball.update(temp)
-#end_def
-
-def reset_bricks(screen_size: tuple, bricks: dict):
-	temp = create_bricks(
-		screen_size,
-		bricks["grid"],
-		bricks["spacing"],
-		bricks["padding"],
-		bricks["colors"],
-	)
-
-	bricks.clear()
-	bricks.update(temp)
-#end_def
-
 def _render_objects(surface: pygame.Surface, objs: dict):
 	player = objs["player"]
 	ball = objs["ball"]
@@ -298,7 +136,7 @@ def _render_texts(
 		surface: pygame.Surface,
 		game_state: dict,
 		color: pygame.Color = pygame.Color("white")):
-	font_name: str = get_asset("fonts", "Photonico-Current-Regular.ttf")
+	font_name: str = utils.get_main_font()
 	lives_font: pygame.font.Font = pygame.font.Font(font_name, 40)
 	score_font: pygame.font.Font = pygame.font.Font(font_name, 25)
 
@@ -328,7 +166,7 @@ def _render_overley(
 		title: str,
 		subtitle: str = "",
 		color: pygame.Color = pygame.Color("white")):
-	font_name: str = get_asset("fonts", "Photonico-Current-Regular.ttf")
+	font_name: str = utils.get_main_font()
 	title_font: pygame.font.Font = pygame.font.Font(font_name, 50)
 	subtitle_font: pygame.font.Font = pygame.font.Font(font_name, 20)
 

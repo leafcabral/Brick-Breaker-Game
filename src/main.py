@@ -12,37 +12,22 @@ globais para escopo de função, modificando as funções, quando necessário, f
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
-import gamefuncs as gf
 import pygame 
-from os import path
+import game
+import gamefuncs as gf
 
 def main() -> None:
 	pygame.init()
 	
-	# relogio para calcular delta time
-	clock = pygame.time.Clock()
-	
-	screen = gf.new_screen(600, 600, "gray19")
-	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
-	icon: pygame.Surface = pygame.image.load(
-		gf.get_asset("images", "icon.jpg")
-	)
-	pygame.display.set_icon(icon)
-	game_state: dict = gf.new_game_state()
+	screen: dict = game.new_screen()
+	game_state: dict = game.new_state()
+	game_objs: dict = game.new_objects(screen["surface"].get_size())
+	timers: dict = game.new_timers()
 
-	player = gf.new_player(screen["surface"].get_size())
-	ball = gf.new_ball(player["shape"])
-	bricks = gf.create_bricks((screen["surface"].get_size()))
+	game.new_timer(timers, "brick_respawn", 2)
 
-	game_objs: dict = {
-		"player": player,
-		"ball": ball,
-		"bricks": bricks,
-	}
-
-	brick_respawn_delay: float = 1
 	while game_state["running"]:
-		game_state["delta"] = clock.tick(60) / 1_000
+		game.get_delta(timers)
 		key_pressed = pygame.key.get_pressed()
 		
 		for event in pygame.event.get():
@@ -63,32 +48,41 @@ def main() -> None:
 
 		gf.move_player(
 			screen,
-			game_state["delta"],
-			player,
+			timers["delta"],
+			game_objs["player"],
 			key_pressed
 		)
-		gf.move_ball(screen, game_state["delta"], ball)
-		gf.handle_ball_collisions(game_state, ball, game_objs)
+		gf.move_ball(screen, timers["delta"], game_objs["ball"])
+		gf.handle_ball_collisions(
+			game_state,
+			game_objs["ball"],
+			game_objs
+		)
 
-		if not gf.is_rect_inside_screen(screen, ball["shape"]):
+		if not gf.is_rect_inside_screen(
+				screen, 
+				game_objs["ball"]["shape"]
+			):
 			game_state["lives"] -= 1
 
 			if game_state["lives"] > 0:
-				gf.reset_ball(ball, player["shape"])
+				game.reset_ball(game_objs)
 			else:
 				game_state["game_over"] = True
 		#end_if
 		
-		if not bricks["list"]:
-			if brick_respawn_delay <= 0:
-				gf.reset_bricks(
+		if not game_objs["bricks"]["list"]:
+			if timers["brick_respawn"] <= 0:
+				game.reset_bricks(
 					(screen["surface"].get_size()),
-					bricks
+					game_objs
 				)
 				game_state["level"] += 1
-				brick_respawn_delay = 1
+				timers["brick_respawn"] = timers[
+					"brick_respawn_original"
+				]
 			else:
-				brick_respawn_delay -= game_state["delta"]
+				timers["brick_respawn"] -= timers["delta"]
 		#end_if
 
 		gf.render_screen(game_state, screen, game_objs)
