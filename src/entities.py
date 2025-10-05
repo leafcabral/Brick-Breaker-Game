@@ -26,12 +26,17 @@ def new_player(screen_size: tuple) -> dict:
 
 	return {
 		"shape": pygame.Rect(position, size),
+		"initial_pos": position,
 		"color": utils.get_main_color(),
 		"speed": speed,
 	}
 #end_def
 
-def new_ball(player: dict, radius: int = 10) -> dict:
+def reset_player(player: dict):
+	player["shape"].topleft = player["initial_pos"]
+#end_def
+
+def new_ball(player: dict, radius: int) -> dict:
 	player_rect: pygame.Rect = player["shape"]
 	circle: pygame.Rect = pygame.Rect(
 		(player_rect.left, player_rect.top),
@@ -53,20 +58,49 @@ def new_ball(player: dict, radius: int = 10) -> dict:
 	return ball
 #end_def
 
-def _new_brick(position: tuple, size: tuple, color: str) -> dict:
+def reset_ball(ball: dict, player: dict):
+	ball["shape"].centerx = player["shape"].centerx
+	ball["shape"].centery = player["shape"].centery - ball["radius"]*2 - 10
+	
+	ball["speed"] = ball["speed_original"].copy()
+#end_def
+
+def _new_brick(position: list, size: tuple, color: str) -> dict:
 	return {
-		"shape": pygame.Rect(position, size),
+		"shape": pygame.Rect(position, tuple(size)),
 		"color": pygame.Color(color),
 	}
 #end_def
 
-def create_bricks(screen_size: tuple, grid: tuple = (7, 4)) -> dict:
+def create_brick_list(bricks: dict):
+	grid: tuple = bricks["grid"]
+	size: tuple = bricks["size"]
+	increment: tuple = bricks["increment"]
+	pos: list = bricks["pos_start"].copy()
+
+	bricks["list"] = []
+	
+	for line in range(grid[1]):
+		# Usa-se modulo para repetir a lista caso grid > lista
+		color = bricks["colors"][line % grid[1]]
+
+		for column in range(grid[0]):
+			brick: dict = _new_brick(pos, size, color)
+			bricks["list"].append(brick)
+
+			pos[0] += increment[0]
+		#end_for
+
+		pos[0] = bricks["pos_start"][0]		
+		pos[1] += increment[1]
+	#end_for
+#end_def
+
+def create_bricks(screen_size: tuple, grid: tuple) -> dict:
 	spacing: int = 5
 	padding: tuple = (70, 50)
 	# azul, vermelho, amarelo, verde
 	colors: tuple = ("dodgerblue", "firebrick", "gold3", "green4")
-
-	brick_list: list = []
 
 	# Blocos vao até 1/3 da altura da tela
 	valid_area: pygame.Rect = pygame.Rect(
@@ -79,28 +113,15 @@ def create_bricks(screen_size: tuple, grid: tuple = (7, 4)) -> dict:
 	)
 
 	increment: tuple = (spacing + size[0], spacing + size[1])
-	pos: list = list(valid_area.topleft)
-
-	for line in range(grid[1]):
-		# Usa-se modulo para repetir a lista caso grid > lista
-		color = colors[line % grid[1]]
-
-		for column in range(grid[0]):
-			brick_list.append(_new_brick(tuple(pos), size, color))
-
-			pos[0] += increment[0]
-		#end_for
-
-		pos[0] = valid_area.left			
-		pos[1] += increment[1]
-	#end_for
 
 	bricks: dict = {
-		"list": brick_list,
+		"pos_start": list(valid_area.topleft),
+		"size": size,
+		"increment": increment,
 		"grid": grid,
-		"spacing": spacing,
-		"padding": padding,
 		"colors": colors,
 	}
+	create_brick_list(bricks)
+
 	return bricks
 #end_def

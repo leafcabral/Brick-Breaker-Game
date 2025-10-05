@@ -15,31 +15,7 @@ aspectos.
 import pygame
 import utils
 import game
-
-def handle_keydown(
-		screen: dict,
-		event: pygame.event.Event,
-		state: dict,
-		objs: dict):
-	match event.key:
-		case pygame.K_ESCAPE | pygame.K_p:
-			state["paused"] = not state["paused"]
-		case pygame.K_r:
-			if state["game_over"]:
-				print(f"Score: {state["score"]}")
-				print(f"Level: {state["level"]}")
-
-				game.reset_game_state(state)
-				game.reset_ball(objs)
-				game.reset_bricks(
-					screen["surface"].get_size(),
-					objs
-				)
-				
-		case pygame.K_q:
-			if state["game_over"] or state["paused"]:
-				state["running"] = False
-#end_def
+import entities
 
 def is_rect_inside_screen(screen: dict, rect: pygame.Rect) -> bool:
 	return screen["rect"].contains(rect)
