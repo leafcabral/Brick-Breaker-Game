@@ -17,9 +17,9 @@ Os integrantes são:
 Apenas baixe os arquivos desse repositório em formato `.zip` e extrai-os em uma pasta
 
 ## Como usar
-Vá para o diretorio do programa e execute o arquivo `game.py` ou digite o seguinte na linha de comando:
+Vá para o diretorio do programa e execute o arquivo `game.py` na pasta `src/` ou digite o seguinte na linha de comando:
 ```console
-python game.py
+python src/game.py
 ```
 
 ## Licença

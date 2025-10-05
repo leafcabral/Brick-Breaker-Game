@@ -14,14 +14,20 @@ aspectos.
 """
 import gamefuncs as gf
 import pygame 
+from os import path
 
 def main() -> None:
 	pygame.init()
 	
 	# relogio para calcular delta time
 	clock = pygame.time.Clock()
+	
 	screen = gf.new_screen(600, 600, "gray19")
 	pygame.display.set_caption("Brick Breaker: ASMbleia\'s edition")
+	icon: pygame.Surface = pygame.image.load(
+		gf.get_asset("images", "icon.jpg")
+	)
+	pygame.display.set_icon(icon)
 	game_state: dict = gf.new_game_state()
 
 	player = gf.new_player(screen["surface"].get_size())

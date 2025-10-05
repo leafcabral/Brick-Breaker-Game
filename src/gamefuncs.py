@@ -13,7 +13,11 @@ feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
 import pygame
-from os import path
+from os.path import join as join_dirs
+
+def get_asset(dir_name: str, file_name: str) -> str:
+	return join_dirs("assets", dir_name, file_name)
+#end_def
 
 def new_game_state():
 	return {
@@ -294,8 +298,7 @@ def _render_texts(
 		surface: pygame.Surface,
 		game_state: dict,
 		color: pygame.Color = pygame.Color("white")):
-	font_path: str = path.join("assets", "fonts")
-	font_name: str = path.join(font_path, "Photonico-Current-Regular.ttf")
+	font_name: str = get_asset("fonts", "Photonico-Current-Regular.ttf")
 	lives_font: pygame.font.Font = pygame.font.Font(font_name, 40)
 	score_font: pygame.font.Font = pygame.font.Font(font_name, 25)
 
@@ -324,9 +327,10 @@ def _render_overley(
 		surface: pygame.Surface,
 		title: str,
 		subtitle: str = "",
-		color: pygame.Color = pygame.Color("yellow")):
-	title_font: pygame.font.Font = pygame.font.Font(None, 50)
-	subtitle_font: pygame.font.Font = pygame.font.Font(None, 30)
+		color: pygame.Color = pygame.Color("white")):
+	font_name: str = get_asset("fonts", "Photonico-Current-Regular.ttf")
+	title_font: pygame.font.Font = pygame.font.Font(font_name, 50)
+	subtitle_font: pygame.font.Font = pygame.font.Font(font_name, 20)
 
 	title_txt: pygame.Surface = title_font.render(title, True, color)
 	subtitle_txt: pygame.Surface = subtitle_font.render(
