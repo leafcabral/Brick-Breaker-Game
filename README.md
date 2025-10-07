@@ -9,9 +9,9 @@ Foi usado como base inicial esse [tutorial da Hashtag Programação](https://www
 Esse projeto foi feito pela ASMbleia, sétima (7ª) equipe de desenvolvimento da disciplina de Programação IV do Curso de Informática para Internet, módulo (semestre) 4.
 Os integrantes são:
 - [Ian Caliel Matos Cabral](https://github.com/calielian)
-- [João Paulo Pipper da Silva](https://github.com/vtkaxx)
+- João Paulo Pipper da Silva
 - [Rafael Cabral Lopes](https://github.com/leafcabral)
-- Vitor Felberg Barcelos
+- [Vitor Felberg Barcelos](https://github.com/vtkaxx)
 
 ## Como instalar
 Apenas baixe os arquivos desse repositório em formato `.zip` e extrai-os em uma pasta
