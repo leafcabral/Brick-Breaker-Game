@@ -15,6 +15,8 @@ aspectos.
 import pygame
 import utils
 import entities
+import movement
+import graphics
 
 def new_screen(width: int = 600, height: int = 600) -> dict:
 	title: str = utils.get_title()
@@ -80,13 +82,6 @@ def update_timers(game_timer: dict):
 			game_timer[i] -= game_timer["delta"]
 #end_def
 
-def reset_game_state(game_state: dict):
-	game_state.update(new_state())
-#end_def
-
-def is_ball_out_of_bounds(screen: dict, ball: dict):
-	return not screen["rect"].contains(ball["shape"])
-#end_def
 
 def consume_live(state: dict, objs: dict):
 	state["lives"] -= 1
@@ -111,7 +106,7 @@ def respawn_bricks(state: dict, timers: dict, objs: dict):
 #end_def
 
 def reset_game(state: dict, objs: dict):
-	reset_game_state(state)
+	state.update(new_state())
 	
 	entities.reset_player(objs["player"])
 	entities.reset_ball(objs["ball"], objs["player"])
@@ -132,4 +127,70 @@ def handle_keydown(event: pygame.event.Event, state: dict, objs: dict):
 		case pygame.K_q:
 			if state["game_over"] or state["paused"]:
 				state["running"] = False
+#end_def
+
+def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: dict) -> None:
+	update_timers(game_timers)
+
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			game_state["running"] = False
+		elif event.type == pygame.KEYDOWN:
+			handle_keydown(event, game_state, game_objs)
+	#end_for
+	
+	if game_state["paused"] or game_state["game_over"]:
+		return
+
+	# Move todas as entidades
+	keys_pressed: tuple = pygame.key.get_pressed()
+	movement.move_player(
+		screen_size,
+		game_timers["delta"],
+		game_objs["player"],
+		keys_pressed
+	)
+	movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
+	movement.handle_ball_collisions(
+		game_state,
+		game_objs["ball"],
+		game_objs
+	)
+
+	# Se bola fora da tela
+	if not utils.is_rect_inside_screen(
+			screen_size,
+			game_objs["ball"]["shape"]):
+		consume_live(game_state, game_objs)
+	
+	# Se acabar os tijolos
+	if not game_objs["bricks"]["list"]:
+		respawn_bricks(game_state, game_timers, game_objs)
+	#end_if
+#end_def
+
+def render_screen(game_state: dict, screen: dict, game_objs: dict):
+	surface: pygame.Surface = screen["surface"]
+
+	surface.fill(screen["bg_color"])
+
+	graphics._render_objects(surface, game_objs)
+	graphics._render_texts(surface, game_state)
+
+	leave: str = "Press ESC to leave or "
+	if game_state["paused"]:
+		graphics.pauseMenu(screen)
+		# graphics._render_overlay(
+		# 	surface,
+		# 	"Game Paused",
+		# 	leave + "Press P to unpause"
+		# )
+	if game_state["game_over"]:
+		graphics._render_overlay(
+			surface,
+			"Game Over",
+			leave + "R to restart"
+		)
+
+	pygame.display.flip()
 #end_def

@@ -14,7 +14,8 @@ aspectos.
 """
 import pygame 
 import game
-import gamefuncs as gf
+
+import graphics
 
 def main() -> None:
 	pygame.init()
@@ -24,46 +25,13 @@ def main() -> None:
 	game_objs: dict = game.new_objects(screen["surface"].get_size())
 	game_timers: dict = game.new_timers()
 
+	# funcao main menu
+	graphics.mainMenu(screen)
 	while game_state["running"]:
-		game.update_timers(game_timers)
-		keys: tuple = pygame.key.get_pressed()
-		
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				game_state["running"] = False
-			elif event.type == pygame.KEYDOWN:
-				game.handle_keydown(
-					event,
-					game_state,
-					game_objs
-				)
-		#end_for
-			
-		if game_state["paused"] or game_state["game_over"]:
-			gf.render_screen(game_state, screen, game_objs)
-			continue
-
-		gf.move_player(
-			screen,
-			game_timers["delta"],
-			game_objs["player"],
-			keys
-		)
-		gf.move_ball(screen, game_timers["delta"], game_objs["ball"])
-		gf.handle_ball_collisions(
-			game_state,
-			game_objs["ball"],
-			game_objs
-		)
-
-		if game.is_ball_out_of_bounds(screen, game_objs["ball"]):
-			game.consume_live(game_state, game_objs)
-		
-		if not game_objs["bricks"]["list"]:
-			game.respawn_bricks(game_state, game_timers, game_objs)
-		#end_if
-
-		gf.render_screen(game_state, screen, game_objs)
+		# Input, timers, movimentos e mais
+		game.process(screen["surface"].get_size(), game_state, game_objs, game_timers)
+	
+		game.render_screen(game_state, screen, game_objs)
 	#end_while
 
 	print(f"Score: {game_state["score"]}")

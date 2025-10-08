@@ -35,6 +35,15 @@ def get_background_color() -> pygame.Color:
 	return pygame.Color("gray19")
 #end_def
 
+def get_secondary_color() -> pygame.Color:
+	return pygame.COlor("black")
+
 def get_main_color() -> pygame.Color:
 	return pygame.Color("white")
+#end_def
+
+def is_rect_inside_screen(screen_size: tuple, rect: pygame.Rect) -> bool:
+	if rect.x < 0 or rect.y < 0 or rect.x + rect.width > screen_size[0] or rect.y + rect.height > screen_size[1]:
+		return False
+	return True
 #end_def
