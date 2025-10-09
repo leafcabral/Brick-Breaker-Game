@@ -63,17 +63,16 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 		elif scale < -1:
 			scale = -1
 
-		if ball["speed"][1] != 0 or ball["speed"][0] != 0:
-			change_directionY: int = 1
-			change_directionX: float = 0.8
+		change_directionY: int = 1
+		change_directionX: float = 0.8
 
-			ball_speed: float = math.sqrt((ball["speed"][0] * ball["speed"][0]) + (ball["speed"][1] * ball["speed"][1]))
-			ball["speed"][0] = ball_speed * scale * change_directionX
+		ball_speed: float = math.sqrt((ball["speed"][0] * ball["speed"][0]) + (ball["speed"][1] * ball["speed"][1]))
+		ball["speed"][0] = ball_speed * scale * change_directionX
 
-			if ball["speed"][1] > 0:
-					change_directionY = -1
+		if ball["speed"][1] > 0:
+			change_directionY = -1
 
-			ball["speed"][1] = math.sqrt(ball_speed*ball_speed - ball["speed"][0]*ball["speed"][0]) * change_directionY
+		ball["speed"][1] = math.sqrt(ball_speed*ball_speed - ball["speed"][0]*ball["speed"][0]) * change_directionY
 
 	else:
 		for brick in bricks.copy():
