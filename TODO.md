@@ -18,8 +18,8 @@ Quando menor o nível, maior a prioridade.
 - [ ] Animação de novos tijolos.
 - [ ] Sistema de níveis.
 - [ ] Utilizar Vec2D ao invés de tupla.
-- [ ] Menu de Iniciar.
-- [ ] Menu de Pause.
+- [X] Menu de Iniciar.
+- [X] Menu de Pause.
 
 ## Nível 3
 - [ ] Colocar icone.

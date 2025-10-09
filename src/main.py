@@ -26,7 +26,7 @@ def main() -> None:
 	game_timers: dict = game.new_timers()
 
 	# funcao main menu
-	graphics.mainMenu(screen)
+	graphics.main_menu(screen)
 	while game_state["running"]:
 		# Input, timers, movimentos e mais
 		game.process(screen["surface"].get_size(), game_state, game_objs, game_timers)

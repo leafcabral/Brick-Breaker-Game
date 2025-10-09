@@ -179,7 +179,7 @@ def render_screen(game_state: dict, screen: dict, game_objs: dict):
 
 	leave: str = "Press ESC to leave or "
 	if game_state["paused"]:
-		graphics.pauseMenu(screen)
+		graphics.pause_menu(screen)
 		# graphics._render_overlay(
 		# 	surface,
 		# 	"Game Paused",

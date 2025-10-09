@@ -91,22 +91,42 @@ def _render_overlay(
 	surface.blit(subtitle_txt, subtitle_rect)
 #end_def
 
-def mainMenu(screen: dict) -> None:
+def main_menu(screen: dict) -> None:
 	surface: pygame.Surface = screen["surface"]
 	surface.fill(utils.get_background_color())
 
-	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), 18)
+	titleSize: int = 40
+	subtitleSize: int = 28
+	textSize: int = 24
+
+	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), titleSize)
+
+	titleText = font.render("Brick Breaker", True, pygame.Color("white"))
+	titleTextRect = titleText.get_rect()
+	titleTextRect.centerx = screen["rect"].centerx
+	titleTextRect.centery += titleSize
+
+	font = pygame.font.Font(utils.get_main_font(), subtitleSize)
+
+	subtitleText = font.render("ASMbleia\'s Edition", True, pygame.Color("white"))
+	subtitleTextRect = subtitleText.get_rect()
+	subtitleTextRect.center = titleTextRect.center
+	subtitleTextRect.centery += titleSize
+
+	font = pygame.font.Font(utils.get_main_font(), textSize)
 
 	textStart = font.render("Press Enter to start game.", True, pygame.Color("white"))
 	textStartRect = textStart.get_rect()
 	textStartRect.center = screen["rect"].center
-	textStartRect.centery -= font.get_linesize()
+	textStartRect.centery -= textSize
 
 	textExit = font.render("Press Q to close game.", True, pygame.Color("white"))
 	textExitRect = textExit.get_rect()
 	textExitRect.center = textStartRect.center
-	textExitRect.centery += font.get_linesize() + 5
+	textExitRect.centery += textSize + 5
 
+	surface.blit(titleText, titleTextRect)
+	surface.blit(subtitleText, subtitleTextRect)
 	surface.blit(textStart, textStartRect)
 	surface.blit(textExit, textExitRect)
 	
@@ -123,29 +143,39 @@ def mainMenu(screen: dict) -> None:
 				if event.key == pygame.K_RETURN: return
 #end_def
 
-def pauseMenu(screen: dict) -> None:
+def pause_menu(screen: dict) -> None:
 	surface: pygame.Surface = screen["surface"]
 	surfaceSize = surface.get_size()
 
-	pauseMenu = pygame.Rect((0, 0), (surfaceSize[0]//2, surfaceSize[1]//2))
-	pauseMenu.center = screen["rect"].center
+	pauseMenu: pygame.Surface = pygame.Surface(surfaceSize)
+	pauseMenu.fill(utils.get_secondary_color())
+	pauseMenu.set_alpha(192)
 
-	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), 18)
+	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), 40)
 
-	text = font.render("Press ESC to unpause.", True, pygame.Color("white"))
+	text = font.render("Game paused", True, pygame.Color("white"))
 	textRect = text.get_rect()
-	textRect.center = (screen["rect"].center)
-	textRect.centery -= font.get_linesize()
+	textRect.centerx = screen["rect"].centerx
+	textRect.centery += font.get_linesize()
+
+	font = pygame.font.Font(utils.get_main_font(), 24)
+
+	textUnpause = font.render("Press ESC to unpause.", True, pygame.Color("white"))
+	textUnpauseRect = textUnpause.get_rect()
+	textUnpauseRect.center = screen["rect"].center
+	textUnpauseRect.centery -= font.get_linesize()
 
 	textExit = font.render("Press Q to close game.", True, pygame.Color("white"))
 	textExitRect = textExit.get_rect()
-	textExitRect.center = textRect.center
+	textExitRect.center = textUnpauseRect.center
 	textExitRect.centery += font.get_linesize()
 
+	surface.blit(pauseMenu, (0, 0))
 	surface.blit(text, textRect)
+	surface.blit(textUnpause, textUnpauseRect)
 	surface.blit(textExit, textExitRect)
 
-	pygame.draw.rect(surface, utils.get_secondary_color(), pauseMenu)
+	pygame.display.flip()
 
 	while True:
 		for event in pygame.event.get():
