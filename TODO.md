@@ -8,7 +8,7 @@ Quando menor o nível, maior a prioridade.
 ## Nível 1
 - [X] Direção da bola muda dependendo de onde bater no jogador.
 - [ ] Bola colide corretamente com os tijolos.
-- [ ] Normalizar velocidade da bola.
+- [X] Normalizar velocidade da bola.
 - [ ] Apertar ↑ ou W para lançar a bola (inicio do jogo e quando perde vida)
 - [X] Sistema de vidas.
 - [X] Novos tijolos quando limpa a tela.
