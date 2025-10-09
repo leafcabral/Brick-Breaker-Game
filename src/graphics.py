@@ -145,11 +145,11 @@ def main_menu(screen: dict) -> None:
 
 def pause_menu(screen: dict) -> None:
 	surface: pygame.Surface = screen["surface"]
-	surfaceSize = surface.get_size()
+	surface_size = surface.get_size()
 
-	pauseMenu: pygame.Surface = pygame.Surface(surfaceSize)
-	pauseMenu.fill(utils.get_secondary_color())
-	pauseMenu.set_alpha(192)
+	pause_menu: pygame.Surface = pygame.Surface(surface_size)
+	pause_menu.fill(utils.get_secondary_color())
+	pause_menu.set_alpha(192)
 
 	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), 40)
 
@@ -170,7 +170,7 @@ def pause_menu(screen: dict) -> None:
 	text_exit_rect.center = text_unpause_rect.center
 	text_exit_rect.centery += font.get_linesize()
 
-	surface.blit(pauseMenu, (0, 0))
+	surface.blit(pause_menu, (0, 0))
 	surface.blit(text, text_rect)
 	surface.blit(text_unpause, text_unpause_rect)
 	surface.blit(text_exit, text_exit_rect)
@@ -186,5 +186,49 @@ def pause_menu(screen: dict) -> None:
 				if event.key == pygame.K_q:
 					quit()
 				if event.key == pygame.K_RETURN: return
+#end_def
 
+def game_over(screen: dict) ->  None:
+	surface: pygame.Surface = screen["surface"]
+	surfaceSize = surface.get_size()
+
+	game_over: pygame.Surface = pygame.Surface(surfaceSize)
+	game_over.fill(utils.get_secondary_color())
+	game_over.set_alpha(192)
+
+	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), 40)
+
+	text = font.render("Game over", True, pygame.Color("red"))
+	text_rect = text.get_rect()
+	text_rect.centerx = screen["rect"].centerx
+	text_rect.centery += font.get_linesize()
+
+	font = pygame.font.Font(utils.get_main_font(), 24)
+
+	text_restart = font.render("Press R to restart.", True, pygame.Color("white"))
+	text_restart_rect = text_restart.get_rect()
+	text_restart_rect.center = screen["rect"].center
+	text_restart_rect.centery -= font.get_linesize()
+
+	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit_rect = text_exit.get_rect()
+	text_exit_rect.center = text_restart_rect.center
+	text_exit_rect.centery += font.get_linesize()
+
+	surface.blit(game_over, (0, 0))
+	surface.blit(text, text_rect)
+	surface.blit(text_restart, text_restart_rect)
+	surface.blit(text_exit, text_exit_rect)
+
+	pygame.display.flip()
+
+	while True:
+		for event in pygame.event.get():
+
+			if event.type == pygame.QUIT:
+				quit()
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_q:
+					quit()
+				if event.key == pygame.K_r: return
 #end_def

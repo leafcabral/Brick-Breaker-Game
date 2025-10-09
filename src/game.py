@@ -177,20 +177,10 @@ def render_screen(game_state: dict, screen: dict, game_objs: dict):
 	graphics._render_objects(surface, game_objs)
 	graphics._render_texts(surface, game_state)
 
-	leave: str = "Press ESC to leave or "
 	if game_state["paused"]:
 		graphics.pause_menu(screen)
-		# graphics._render_overlay(
-		# 	surface,
-		# 	"Game Paused",
-		# 	leave + "Press P to unpause"
-		# )
 	if game_state["game_over"]:
-		graphics._render_overlay(
-			surface,
-			"Game Over",
-			leave + "R to restart"
-		)
+		graphics.game_over(screen)
 
 	pygame.display.flip()
 #end_def
