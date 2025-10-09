@@ -58,18 +58,23 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 		hit_position: float = ball_shape.centerx - player_shape.centerx
 		scale: float = hit_position / (float(player_shape.width) / 2)
 
-		change_directionY: float = 1
+		if scale > 1:
+			scale = 1
+		elif scale < -1:
+			scale = -1
 
-		ball_speed: float = math.sqrt((ball["speed"][0] * ball["speed"][0]) + (ball["speed"][1] * ball["speed"][1]))
+		if ball["speed"][1] != 0 and ball["speed"][0] != 0:
+			change_directionY: int = 1
+			change_directionX: float = 0.8
 
-		ball["speed"][0] = ball_speed * scale
+			ball_speed: float = math.sqrt((ball["speed"][0] * ball["speed"][0]) + (ball["speed"][1] * ball["speed"][1]))
+			ball["speed"][0] = ball_speed * scale * change_directionX
 
-		if ball["speed"][1] > 0:
-			change_directionY = -1
-		
-		ball["speed"][1] = math.sqrt(ball_speed*ball_speed - ball["speed"][0]*ball["speed"][0]) * change_directionY
-		
-		#ball_shape.bottom = player_shape.bottom
+			if ball["speed"][1] > 0:
+					change_directionY = -1
+
+			ball["speed"][1] = math.sqrt(ball_speed*ball_speed - ball["speed"][0]*ball["speed"][0]) * change_directionY
+
 	else:
 		for brick in bricks.copy():
 			brick_shape: pygame.Rect = brick["shape"]
