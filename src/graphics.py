@@ -142,10 +142,10 @@ def pauseMenu(screen: dict) -> None:
 	textExitRect.center = textRect.center
 	textExitRect.centery += font.get_linesize()
 
-	screen.blit(text, textRect)
-	screen.blit(textExit, textExitRect)
+	surface.blit(text, textRect)
+	surface.blit(textExit, textExitRect)
 
-	pygame.draw.rect(screen, utils.get_secondary_color(), pauseMenu)
+	pygame.draw.rect(surface, utils.get_secondary_color(), pauseMenu)
 
 	while True:
 		for event in pygame.event.get():
