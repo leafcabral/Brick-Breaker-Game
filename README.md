@@ -1,6 +1,6 @@
 # BRICK BREAKER: ASMbleia's edition
 
-Recriação do jogo Brick Breaker em python utilizando a biblioteca pygame, inspirado na versão do Google. Atividade avaliativa para a disciplina de Programação IV do Curso de Informática para Internet do IFES campus Serra.
+Recriação do jogo *Brick Breaker* em Python utilizando a biblioteca *pygame*, inspirado na versão do Google. Atividade avaliativa para a disciplina de Programação IV do Curso de Informática para Internet do IFES campus Serra.
 
 ## Sobre o Projeto
 Foi usado como base inicial esse [tutorial da Hashtag Programação](https://www.youtube.com/watch?v=h0fKGPW_cxw). Além da mudança pedidas pela professora (mudar váriaveis globais para escopo de função, modificando as funções, quando necessário), foram feitos diversas mudanças para deixar o jogo e o código melhor em diversos aspectos.
@@ -13,14 +13,25 @@ Os integrantes são:
 - [Rafael Cabral Lopes](https://github.com/leafcabral)
 - [Vitor Felberg Barcelos](https://github.com/vtkaxx)
 
-## Como instalar
+## Requisitos
+- **Python 3.6** ou superior.
+- **Pygame 2.0** ou superior (incerto).
+
+## Instalação
 Apenas baixe os arquivos desse repositório em formato `.zip` e extrai-os em uma pasta
 
-## Como usar
+## Utilização
 Vá para o diretorio do programa e execute o arquivo `game.py` na pasta `src/` ou digite o seguinte na linha de comando:
 ```console
 python src/game.py
 ```
+### Controles
+- `← →`/`A D`: Mover jogador
+- `ESPAÇO`/`↑`/`W`: Lançar bola
+- `ESC`/`P`: Pausar
+- `R`: Reiniciar (game over)
+- `Q`: Sair
+
 
 ## Licença
 Este projeto está sob a Licença Pública Geral GNU (v3.0).

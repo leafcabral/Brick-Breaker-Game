@@ -120,8 +120,8 @@ def handle_keydown(event: pygame.event.Event, state: dict, objs: dict):
 				state["paused"] = not state["paused"]
 		case pygame.K_r:
 			if state["game_over"]:
-				print(f"Score: {state["score"]}")
-				print(f"Level: {state["level"]}")
+				print(f"Score: {state['score']}")
+				print(f"Level: {state['level']}")
 
 				reset_game(state, objs)
 		case pygame.K_q:

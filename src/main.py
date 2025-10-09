@@ -34,8 +34,8 @@ def main() -> None:
 		game.render_screen(game_state, screen, game_objs)
 	#end_while
 
-	print(f"Score: {game_state["score"]}")
-	print(f"Level: {game_state["level"]}")
+	print(f"Score: {game_state['score']}")
+	print(f"Level: {game_state['level']}")
 	pygame.quit()
 #end_def
 

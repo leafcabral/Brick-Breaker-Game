@@ -38,7 +38,7 @@ def _render_texts(
 		True, color
 	)
 	score: pygame.Surface = score_font.render(
-		f"{game_state["score"]:05}",
+		f"{game_state['score']:05}",
 		True, color
 	)
 
