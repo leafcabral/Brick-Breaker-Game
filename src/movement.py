@@ -63,7 +63,7 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 		elif scale < -1:
 			scale = -1
 
-		if ball["speed"][1] != 0 and ball["speed"][0] != 0:
+		if ball["speed"][1] != 0 or ball["speed"][0] != 0:
 			change_directionY: int = 1
 			change_directionX: float = 0.8
 
