@@ -12,7 +12,7 @@ globais para escopo de função, modificando as funções, quando necessário, f
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
-import pygame, utils
+import pygame, utils, math
 
 def move_player(screen_size: tuple, delta: float, player: dict, keys):
 	shape: pygame.Rect = player["shape"]
@@ -58,14 +58,18 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 		hit_position: float = ball_shape.centerx - player_shape.centerx
 		scale: float = hit_position / (float(player_shape.width) / 2)
 
-		ball["speed"][0] = ball["speed_original"][0] * scale * 2
-		ball["speed"][1] *= -1
+		if scale > 1:
+			scale = 1
+		elif scale < -1:
+			scale = -1
 
-		# ball_speed = pygame.math.Vector2(ball["speed"][0], ball["speed"][1]).normalize()
+		interferenceX: float = 0.8
 
-		# ball["speed"] = [ball_speed.x, ball_speed.y]
-		
-		#ball_shape.bottom = player_shape.bottom
+		length: float = pygame.Vector2.length(ball["speed"])
+
+		ball["speed"][0] = length * scale * interferenceX
+		ball["speed"][1] = math.sqrt(length**2 - ball["speed"][0]**2) * -1
+
 	else:
 		for brick in bricks.copy():
 			brick_shape: pygame.Rect = brick["shape"]

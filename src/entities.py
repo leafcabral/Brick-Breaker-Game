@@ -51,8 +51,8 @@ def new_ball(player: dict, radius: int) -> dict:
 		"shape": circle,
 		"color": utils.get_main_color(),
 		"radius": radius,
-		"speed_original": [speed, -speed],
-		"speed": [speed, -speed],
+		"speed_original": pygame.Vector2(speed, -speed),
+		"speed": pygame.Vector2(speed, -speed),
 	}
 
 	return ball

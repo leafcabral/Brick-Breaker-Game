@@ -8,7 +8,7 @@ Quando menor o nível, maior a prioridade.
 ## Nível 1
 - [X] Direção da bola muda dependendo de onde bater no jogador.
 - [ ] Bola colide corretamente com os tijolos.
-- [ ] Normalizar velocidade da bola.
+- [X] Normalizar velocidade da bola.
 - [ ] Apertar ↑ ou W para lançar a bola (inicio do jogo e quando perde vida)
 - [X] Sistema de vidas.
 - [X] Novos tijolos quando limpa a tela.
@@ -18,8 +18,8 @@ Quando menor o nível, maior a prioridade.
 - [ ] Animação de novos tijolos.
 - [ ] Sistema de níveis.
 - [ ] Utilizar Vec2D ao invés de tupla.
-- [ ] Menu de Iniciar.
-- [ ] Menu de Pause.
+- [X] Menu de Iniciar.
+- [X] Menu de Pause.
 
 ## Nível 3
 - [ ] Colocar icone.
