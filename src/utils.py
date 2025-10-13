@@ -24,7 +24,7 @@ def get_main_font() -> str:
 #end_def
 
 def get_icon() -> str:
-	return get_asset("images", "icon.jpg")
+	return get_asset("images", "icon.png")
 #end_def
 
 def get_title() -> str:

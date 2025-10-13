@@ -20,7 +20,7 @@
 - [X] Menu de Pause.
 
 ## Extras
-- [ ] Colocar icone correto.
+- [X] Colocar icone correto.
 - [X] Mudar a fonte padrão.
 - [ ] Efeito de destruir tijolo.
 
