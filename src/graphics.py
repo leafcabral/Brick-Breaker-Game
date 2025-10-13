@@ -174,18 +174,6 @@ def pause_menu(screen: dict) -> None:
 	surface.blit(text, text_rect)
 	surface.blit(text_unpause, text_unpause_rect)
 	surface.blit(text_exit, text_exit_rect)
-
-	pygame.display.flip()
-
-	while True:
-		for event in pygame.event.get():
-
-			if event.type == pygame.QUIT:
-				quit()
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_q:
-					quit()
-				if event.key == pygame.K_RETURN: return
 #end_def
 
 def game_over(screen: dict) ->  None:
@@ -219,16 +207,4 @@ def game_over(screen: dict) ->  None:
 	surface.blit(text, text_rect)
 	surface.blit(text_restart, text_restart_rect)
 	surface.blit(text_exit, text_exit_rect)
-
-	pygame.display.flip()
-
-	while True:
-		for event in pygame.event.get():
-
-			if event.type == pygame.QUIT:
-				quit()
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_q:
-					quit()
-				if event.key == pygame.K_r: return
 #end_def

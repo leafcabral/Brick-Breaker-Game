@@ -17,6 +17,7 @@ import utils
 import entities
 import movement
 import graphics
+import controls
 
 def new_screen(width: int = 600, height: int = 600) -> dict:
 	title: str = utils.get_title()
@@ -113,31 +114,28 @@ def reset_game(state: dict, objs: dict):
 	entities.create_brick_list(objs["bricks"])
 #end_def
 
-def handle_keydown(event: pygame.event.Event, state: dict, objs: dict):
-	match event.key:
-		case pygame.K_ESCAPE | pygame.K_p:
-			if not state["game_over"]:
-				state["paused"] = not state["paused"]
-		case pygame.K_r:
-			if state["game_over"]:
-				print(f"Score: {state['score']}")
-				print(f"Level: {state['level']}")
+def handle_keydown(events: list, state: dict, objs: dict):
+	if controls.was_pressed("menu", events):
+		state["paused"] = not state["paused"]
 
-				reset_game(state, objs)
-		case pygame.K_q:
-			if state["game_over"] or state["paused"]:
-				state["running"] = False
+	if controls.was_pressed("quit", events) and \
+			(state["paused"] or state["game_over"]):
+		state["running"] = False
+	if controls.was_pressed("restart", events) and state["game_over"]:
+		#print_stats(state)
+		reset_game(state, objs)
 #end_def
 
 def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: dict) -> None:
 	update_timers(game_timers)
 
-	for event in pygame.event.get():
+	events: list = pygame.event.get()
+	for event in events:
 		if event.type == pygame.QUIT:
 			game_state["running"] = False
-		elif event.type == pygame.KEYDOWN:
-			handle_keydown(event, game_state, game_objs)
 	#end_for
+	
+	handle_keydown(events, game_state, game_objs)
 	
 	if game_state["paused"] or game_state["game_over"]:
 		return

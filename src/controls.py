@@ -22,7 +22,9 @@ def actions_dict() -> dict:
 		"down": [pygame.K_DOWN, pygame.K_s],
 
 		"confirm": [pygame.K_RETURN, pygame.K_SPACE],
-		"menu": [pygame.K_ESCAPE, pygame.K_p]
+		"menu": [pygame.K_ESCAPE, pygame.K_p],
+		"quit": [pygame.K_q],
+		"restart": [pygame.K_r]
 	}
 #end_def
 
@@ -45,7 +47,7 @@ def was_pressed(action: str, events: list) -> bool:
 
 	if action not in actions:
 		return False
-
+		
 	for event in events:
 		if event.type != pygame.KEYDOWN:
 			continue
@@ -67,12 +69,12 @@ def get_action_keys(action: str) -> list:
 #end_def
 
 def get_action_keys_strings(action: str) -> list:
-	strings: list = []
 	keys: list = get_action_keys(action)
 
 	if keys == None:
 		return None
 	
+	strings: list = []
 	for key in keys:
 		strings.append(pygame.key.name(key).upper())
 	
