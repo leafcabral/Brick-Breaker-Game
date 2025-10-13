@@ -12,15 +12,15 @@ globais para escopo de função, modificando as funções, quando necessário, f
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
-import pygame, utils, math
+import pygame, utils, math, controls
 
-def move_player(screen_size: tuple, delta: float, player: dict, keys):
+def move_player(screen_size: tuple, delta: float, player: dict):
 	shape: pygame.Rect = player["shape"]
 	pos_increment: int = int(player["speed"] * delta)
 	
-	if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+	if controls.is_pressed("right"):
 		shape.x += pos_increment
-	if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+	if controls.is_pressed("left"):
 		shape.x -= pos_increment
 
 	if not utils.is_rect_inside_screen(screen_size, shape):

@@ -141,12 +141,10 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		return
 
 	# Move todas as entidades
-	keys_pressed: tuple = pygame.key.get_pressed()
 	movement.move_player(
 		screen_size,
 		game_timers["delta"],
-		game_objs["player"],
-		keys_pressed
+		game_objs["player"]
 	)
 	movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
 	movement.handle_ball_collisions(
