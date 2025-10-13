@@ -56,3 +56,25 @@ def was_pressed(action: str, events: list) -> bool:
 	
 	return False
 #end_def
+
+def get_action_keys(action: str) -> list:
+	actions: dict = actions_dict()
+
+	if action not in actions:
+		return None
+	else:
+		return actions[action]
+#end_def
+
+def get_action_keys_strings(action: str) -> list:
+	strings: list = []
+	keys: list = get_action_keys(action)
+
+	if keys == None:
+		return None
+	
+	for key in keys:
+		strings.append(pygame.key.name(key).upper())
+	
+	return strings
+#end_def
