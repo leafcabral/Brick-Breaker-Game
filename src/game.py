@@ -195,7 +195,7 @@ def start_game(game_objs: dict, events: list, game_state: dict) -> bool:
 		if event.type == pygame.QUIT:
 			game_state["running"] = False
 
-	if controls.is_pressed("up"):
+	if controls.is_pressed("up") or controls.is_pressed("throw"):
 		game_state["ball_thrown"] = True
 		return True
 	

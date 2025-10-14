@@ -20,8 +20,9 @@ def actions_dict() -> dict:
 		"right": [pygame.K_RIGHT, pygame.K_d],
 		"up": [pygame.K_UP, pygame.K_w],
 		"down": [pygame.K_DOWN, pygame.K_s],
+		"throw": [pygame.K_SPACE],
 
-		"confirm": [pygame.K_RETURN, pygame.K_SPACE],
+		"confirm": [pygame.K_RETURN],
 		"menu": [pygame.K_ESCAPE, pygame.K_p],
 		"quit": [pygame.K_q],
 		"restart": [pygame.K_r]
