@@ -16,7 +16,7 @@ import pygame
 from os.path import join as join_dirs
 
 def get_asset(dir_name: str, file_name: str) -> str:
-	return join_dirs("assets", dir_name, file_name)
+	return join_dirs("../assets", dir_name, file_name)
 #end_def
 
 def get_main_font() -> str:
