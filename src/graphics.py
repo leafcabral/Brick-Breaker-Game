@@ -148,12 +148,12 @@ def main_menu(screen: dict) -> None:
 	control_3_rect.centerx += 10
 	control_3_rect.centery = surface.get_size()[1] - font.get_linesize() * 3
 
-	control_4 = font.render("R to restart on game over", True, pygame.Color("white"))
+	control_4 = font.render("R to restart on game over.", True, pygame.Color("white"))
 	control_4_rect = control_4.get_rect()
 	control_4_rect.centerx += 10
 	control_4_rect.centery = surface.get_size()[1] - font.get_linesize() * 2
 
-	control_5 = font.render("Q to quit", True, pygame.Color("white"))
+	control_5 = font.render("Q to quit.", True, pygame.Color("white"))
 	control_5_rect = control_5.get_rect()
 	control_5_rect.centerx += 10
 	control_5_rect.centery = surface.get_size()[1] - font.get_linesize()
