@@ -147,11 +147,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		game_objs["player"]
 	)
 	movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
-	movement.handle_ball_collisions(
-		game_state,
-		game_objs["ball"],
-		game_objs
-	)
+	movement.handle_ball_collisions(game_state, game_objs)
 
 	# Se bola fora da tela
 	if not utils.is_rect_inside_screen(

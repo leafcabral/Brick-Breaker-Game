@@ -47,10 +47,18 @@ def move_ball(screen_size: tuple, delta: float, ball: dict):
 	#end_if
 #end_def
 
-def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
+def handle_ball_collisions(game_state: dict, game_objs: dict):
+	ball: dict = game_objs["ball"]
+	_handle_player_collision(ball, game_objs["player"])
+	_handle_brick_collisions(game_state, ball, game_objs["bricks"])
+#end_def
+
+	
+#end_def
+
+def _handle_player_collision(ball: dict, player: dict):
 	ball_shape: pygame.Rect = ball["shape"]
-	player_shape: pygame.Rect = game_objs["player"]["shape"]
-	bricks: list = game_objs["bricks"]["list"]
+	player_shape: pygame.Rect = player["shape"]
 
 	if ball_shape.colliderect(player_shape):
 		# posição relativa do bola do centro do jogador
@@ -69,29 +77,40 @@ def handle_ball_collisions(game_state: dict, ball: dict, game_objs: dict):
 
 		ball["speed"][0] = length * scale * interferenceX
 		ball["speed"][1] = math.sqrt(length**2 - ball["speed"][0]**2) * -1
+#end_def
 
-	else:
-		for brick in bricks.copy():
-			brick_shape: pygame.Rect = brick["shape"]
+def _handle_brick_collisions(game_state: dict, ball: dict, bricks_obj: dict):
+	ball_shape: pygame.Rect = ball["shape"]
+	bricks: list = bricks_obj["list"]
 
-			if ball_shape.colliderect(brick_shape):
-				# Quanto maior a velocidade
-				# Maior a chance de error
-				overlap_L: int = ball_shape.right - brick_shape.left
-				overlap_R: int = brick_shape.right - ball_shape.left
-				overlap_T: int = ball_shape.bottom - brick_shape.top
-				overlap_B: int = brick_shape.bottom - ball_shape.top
+	for brick in bricks:
+		brick_shape: pygame.Rect = brick["shape"]
+		
+		if ball_shape.colliderect(brick_shape):
+			# Quanto maior a velocidade
+			# Maior a chance de error
+			overlap_L: int = ball_shape.right - brick_shape.left
+			overlap_R: int = brick_shape.right - ball_shape.left
+			overlap_T: int = ball_shape.bottom - brick_shape.top
+			overlap_B: int = brick_shape.bottom - ball_shape.top
 
-				smallest = min(overlap_L, overlap_R, overlap_T, overlap_B)
+			smallest = min(overlap_L, overlap_R, overlap_T, overlap_B)
+			if smallest == overlap_L:
+				ball["speed"][0] *= -1
+				ball_shape.right = brick_shape.left - 1
+			elif smallest == overlap_R:
+				ball["speed"][0] *= -1
+				ball_shape.left = brick_shape.right + 1
+			elif smallest == overlap_T: 
+				ball["speed"][1] *= -1
+				ball_shape.bottom = brick_shape.top - 1
+			else:  # Hit bottom
+				ball["speed"][1] *= -1
+				ball_shape.top = brick_shape.bottom + 1
 
-				if smallest == overlap_L or smallest == overlap_R:
-					ball["speed"][0] *= -1
-				else:
-					ball["speed"][1] *= -1
-
-				bricks.remove(brick)
-				game_state["score"] += game_state["level"]
-			#end_if
-		#end_for
-	#end_if
+			bricks.remove(brick)
+			game_state["score"] += game_state["level"]
+			break
+		#end_if
+	#end_for
 #end_def
