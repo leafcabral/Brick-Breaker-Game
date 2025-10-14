@@ -12,7 +12,7 @@ globais para escopo de função, modificando as funções, quando necessário, f
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
-import pygame, utils
+import pygame, utils, controls
 
 def _render_objects(surface: pygame.Surface, objs: dict):
 	player = objs["player"]
@@ -115,12 +115,12 @@ def main_menu(screen: dict) -> None:
 
 	font = pygame.font.Font(utils.get_main_font(), text_size)
 
-	text_start = font.render("Press Enter to start game.", True, pygame.Color("white"))
+	text_start = font.render(f"Press {controls.action_to_str("confirm")} to start game.", True, pygame.Color("white"))
 	text_start_rect = text_start.get_rect()
 	text_start_rect.center = screen["rect"].center
 	text_start_rect.centery -= text_size
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_start_rect.center
 	text_exit_rect.centery += text_size + 5
@@ -160,12 +160,12 @@ def pause_menu(screen: dict) -> None:
 
 	font = pygame.font.Font(utils.get_main_font(), 24)
 
-	text_unpause = font.render("Press ESC to unpause.", True, pygame.Color("white"))
+	text_unpause = font.render(f"Press {controls.action_to_str("menu")} to unpause.", True, pygame.Color("white"))
 	text_unpause_rect = text_unpause.get_rect()
 	text_unpause_rect.center = screen["rect"].center
 	text_unpause_rect.centery -= font.get_linesize()
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_unpause_rect.center
 	text_exit_rect.centery += font.get_linesize()
@@ -193,12 +193,12 @@ def game_over(screen: dict) ->  None:
 
 	font = pygame.font.Font(utils.get_main_font(), 24)
 
-	text_restart = font.render("Press R to restart.", True, pygame.Color("white"))
+	text_restart = font.render(f"Press {controls.action_to_str("restart")} to restart.", True, pygame.Color("white"))
 	text_restart_rect = text_restart.get_rect()
 	text_restart_rect.center = screen["rect"].center
 	text_restart_rect.centery -= font.get_linesize()
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_restart_rect.center
 	text_exit_rect.centery += font.get_linesize()
