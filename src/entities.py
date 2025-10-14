@@ -96,14 +96,14 @@ def create_brick_list(bricks: dict):
 
 def create_bricks(screen_size: tuple, grid: tuple) -> dict:
 	spacing: int = 5
-	padding: tuple = (70, 50)
+	padding: tuple = (50, -170)
 	# azul, vermelho, amarelo, verde
 	colors: tuple = ("dodgerblue", "firebrick", "gold3", "green4")
 
 	# Blocos vao até 1/3 da altura da tela
 	valid_area: pygame.Rect = pygame.Rect(
 		padding,
-		(screen_size[0] - padding[0]*2, screen_size[1]//3 - padding[1]),
+		(screen_size[0] - padding[0]*2, screen_size[1]//3 - padding[1] - 200),
 	)
 	size: tuple = (
 		(valid_area.width // grid[0]) - spacing,
