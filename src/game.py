@@ -156,11 +156,16 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		return
 
 	# Se bola fora da tela
+	"""
 	if not utils.is_rect_inside_screen(
 			screen_size,
 			game_objs["ball"]["shape"]):
 		consume_live(game_state, game_objs)
-	
+	"""
+
+	if (game_objs["ball"]["shape"].centery + game_objs["ball"]["radius"]) >= screen_size[1]:
+		consume_live(game_state, game_objs)
+
 	# Se acabar os tijolos
 	if not game_objs["bricks"]["list"]:
 		respawn_bricks(game_state, game_timers, game_objs)
