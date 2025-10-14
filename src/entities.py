@@ -49,6 +49,7 @@ def new_ball(player: dict, radius: int) -> dict:
 		"shape": circle,
 		"color": utils.get_main_color(),
 		"radius": radius,
+		"previous_pos": pygame.Vector2(circle.topleft),
 		"speed_original": pygame.Vector2(speed, -speed),
 		"speed": pygame.Vector2(speed, -speed),
 	}

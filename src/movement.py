@@ -33,12 +33,13 @@ def move_player(screen_size: tuple, delta: float, player: dict):
 def move_ball(screen_size: tuple, delta: float, ball: dict):
 	shape: pygame.Rect = ball["shape"]
 
+	ball["previous_pos"] = shape.topleft[:]
+
 	shape.x += ball["speed"][0] * delta
 	shape.y += ball["speed"][1] * delta
 
 	if not utils.is_rect_inside_screen(screen_size, shape):
-		if shape.left < 0 \
-				or shape.right > screen_size[0]:
+		if shape.left < 0 or shape.right > screen_size[0]:
 			ball["speed"][0] *= -1
 			shape.x += ball["speed"][0] * delta
 		elif shape.top < 0:
@@ -86,31 +87,33 @@ def _handle_brick_collisions(game_state: dict, ball: dict, bricks_obj: dict):
 	for brick in bricks:
 		brick_shape: pygame.Rect = brick["shape"]
 		
-		if ball_shape.colliderect(brick_shape):
-			# Quanto maior a velocidade
-			# Maior a chance de error
-			overlap_L: int = ball_shape.right - brick_shape.left
-			overlap_R: int = brick_shape.right - ball_shape.left
-			overlap_T: int = ball_shape.bottom - brick_shape.top
-			overlap_B: int = brick_shape.bottom - ball_shape.top
+		overlaps: list = _calc_rects_overlap(ball_shape, brick_shape)
+		if overlaps == None:
+			continue
 
-			smallest = min(overlap_L, overlap_R, overlap_T, overlap_B)
-			if smallest == overlap_L:
-				ball["speed"][0] *= -1
-				ball_shape.right = brick_shape.left - 1
-			elif smallest == overlap_R:
-				ball["speed"][0] *= -1
-				ball_shape.left = brick_shape.right + 1
-			elif smallest == overlap_T: 
-				ball["speed"][1] *= -1
-				ball_shape.bottom = brick_shape.top - 1
-			else:  # Hit bottom
-				ball["speed"][1] *= -1
-				ball_shape.top = brick_shape.bottom + 1
+		smallest_overlap_i = overlaps.index(min(overlaps))
+		if smallest_overlap_i < 2: # 0 ou 1 => esquerda ou direita
+			ball["speed"].x *= -1
+		else: # 2 e 3 => cima ou baixo
+			ball["speed"].y *= -1
+		
+		ball_shape.topleft = ball["previous_pos"][:]
 
-			bricks.remove(brick)
-			game_state["score"] += game_state["level"]
-			break
+		bricks.remove(brick)
+		game_state["score"] += game_state["level"]
+		break
 		#end_if
 	#end_for
+#end_def
+
+def _calc_rects_overlap(rect1: pygame.Rect, rect2: pygame.Rect) -> list:
+	if not rect1.colliderect(rect2):
+		return None
+	
+	return [
+		rect1.right - rect2.left,
+		rect2.right - rect1.left,
+		rect1.bottom - rect2.top,
+		rect2.bottom - rect1.top,
+	]
 #end_def
