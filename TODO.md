@@ -3,9 +3,6 @@
 ## Necessário
 - [X] Retirar as variavéis globais.
 
-## **BUGS QUE DEVEM SER EXPURGADOS**
-- Bola quica no canto superior esquerdo = -1 vida
-
 ## Essenciais
 - [X] Direção da bola muda dependendo de onde bater no jogador.
 - [X] Bola colide corretamente com os tijolos.
