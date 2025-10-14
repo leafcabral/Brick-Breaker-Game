@@ -98,6 +98,7 @@ def main_menu(screen: dict) -> None:
 	title_size: int = 40
 	subtitle_size: int = 28
 	text_size: int = 24
+	control_size: int = 18
 
 	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), title_size)
 
@@ -124,6 +125,15 @@ def main_menu(screen: dict) -> None:
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_start_rect.center
 	text_exit_rect.centery += text_size + 5
+
+	font = pygame.font.Font(utils.get_main_font(), control_size)
+
+	control_main = font.render("Controls:", True, pygame.Color("white"))
+	control_main_rect = control_main.get_rect()
+	control_main_rect.centerx += 10
+	control_main_rect.centery = surface.get_size()[1] - font.get_linesize() * 5 - 10
+
+
 
 	surface.blit(title_text, title_text_rect)
 	surface.blit(subtitle_text, subtitle_text_rect)
