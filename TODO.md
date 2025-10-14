@@ -4,7 +4,6 @@
 - [X] Retirar as variavéis globais.
 
 ## **BUGS QUE DEVEM SER EXPURGADOS**
-- Bola quica no canto superior esquerdo = -1 vida
 - Bola quica errado quando encostas em duas no mesmo frame (passa por dentro)
 
 ## Essenciais
