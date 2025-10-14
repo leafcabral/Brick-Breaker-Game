@@ -98,6 +98,7 @@ def main_menu(screen: dict) -> None:
 	title_size: int = 40
 	subtitle_size: int = 28
 	text_size: int = 24
+	control_size: int = 18
 
 	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), title_size)
 
@@ -125,10 +126,48 @@ def main_menu(screen: dict) -> None:
 	text_exit_rect.center = text_start_rect.center
 	text_exit_rect.centery += text_size + 5
 
+	font = pygame.font.Font(utils.get_main_font(), control_size)
+
+	control_main = font.render("Controls:", True, pygame.Color("white"))
+	control_main_rect = control_main.get_rect()
+	control_main_rect.centerx += 10
+	control_main_rect.centery = surface.get_size()[1] - font.get_linesize() * 6 - 10
+
+	control_1 = font.render("Press ←/→ or A/D to move.", True, pygame.Color("white"))
+	control_1_rect = control_1.get_rect()
+	control_1_rect.centerx += 10
+	control_1_rect.centery = surface.get_size()[1] - font.get_linesize() * 5
+
+	control_2 = font.render("SPACEBAR or ↑/W to throw.", True, pygame.Color("white"))
+	control_2_rect = control_2.get_rect()
+	control_2_rect.centerx += 10
+	control_2_rect.centery = surface.get_size()[1] - font.get_linesize() * 4
+
+	control_3 = font.render("ESC or P to pause.", True, pygame.Color("white"))
+	control_3_rect = control_3.get_rect()
+	control_3_rect.centerx += 10
+	control_3_rect.centery = surface.get_size()[1] - font.get_linesize() * 3
+
+	control_4 = font.render("R to restart on game over.", True, pygame.Color("white"))
+	control_4_rect = control_4.get_rect()
+	control_4_rect.centerx += 10
+	control_4_rect.centery = surface.get_size()[1] - font.get_linesize() * 2
+
+	control_5 = font.render("Q to quit.", True, pygame.Color("white"))
+	control_5_rect = control_5.get_rect()
+	control_5_rect.centerx += 10
+	control_5_rect.centery = surface.get_size()[1] - font.get_linesize()
+
 	surface.blit(title_text, title_text_rect)
 	surface.blit(subtitle_text, subtitle_text_rect)
 	surface.blit(text_start, text_start_rect)
 	surface.blit(text_exit, text_exit_rect)
+	surface.blit(control_main, control_main_rect)
+	surface.blit(control_1, control_1_rect)
+	surface.blit(control_2, control_2_rect)
+	surface.blit(control_3, control_3_rect)
+	surface.blit(control_4, control_4_rect)
+	surface.blit(control_5, control_5_rect)
 	
 	pygame.display.flip()
 	
