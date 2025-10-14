@@ -47,6 +47,7 @@ def new_state(lives: int = 3) -> dict:
 		"running": True,
 		"game_over": False,
 		"paused": False,
+		"ball_thrown": False 
 	}
 #end _def
 
@@ -86,6 +87,7 @@ def update_timers(game_timer: dict):
 
 def consume_live(state: dict, objs: dict):
 	state["lives"] -= 1
+	state["ball_thrown"] = False
 
 	if state["lives"] > 0:
 		entities.reset_ball(objs["ball"], objs["player"])
@@ -146,8 +148,12 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		game_timers["delta"],
 		game_objs["player"]
 	)
-	movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
-	movement.handle_ball_collisions(game_state, game_objs)
+
+	if game_state["ball_thrown"]:
+		movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
+		movement.handle_ball_collisions(game_state, game_objs)
+	elif not start_game(game_objs, events, game_state):
+		return
 
 	# Se bola fora da tela
 	if not utils.is_rect_inside_screen(
@@ -176,3 +182,21 @@ def render_screen(game_state: dict, screen: dict, game_objs: dict):
 
 	pygame.display.flip()
 #end_def
+
+def start_game(game_objs: dict, events: list, game_state: dict) -> bool:
+	player_rect: pygame.Rect = game_objs["player"]["shape"]
+	ball: dict = game_objs["ball"]
+	circle: pygame.Rect = ball["shape"]
+
+	circle.centery = player_rect.centery - (player_rect.height/2) - 10 - ball["radius"]
+	circle.centerx = player_rect.centerx
+
+	for event in events:
+		if event.type == pygame.QUIT:
+			game_state["running"] = False
+
+	if controls.is_pressed("up"):
+		game_state["ball_thrown"] = True
+		return True
+	
+	return False

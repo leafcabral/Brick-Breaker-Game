@@ -42,9 +42,7 @@ def new_ball(player: dict, radius: int) -> dict:
 		(player_rect.left, player_rect.top),
 		(radius*2, radius*2)
 	)
-	circle.centerx = player_rect.centerx
-	circle.centery = player_rect.centery - radius*2 - 10
-	
+
 	speed: int = (player["speed"] * 7) // 8
 
 	ball: dict = {
