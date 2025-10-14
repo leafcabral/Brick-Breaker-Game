@@ -99,7 +99,7 @@ def respawn_bricks(state: dict, timers: dict, objs: dict):
 	timer_name: str = "brick_respawn"
 	
 	if timer_name not in timers:
-		timers[timer_name] = 2
+		timers[timer_name] = 0
 	elif timers[timer_name] <= 0:
 		del timers[timer_name]
 		
@@ -131,6 +131,10 @@ def handle_keydown(events: list, state: dict, objs: dict):
 def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: dict) -> None:
 	update_timers(game_timers)
 
+	if game_objs["bricks"]["pos_start"][1] < 50:
+		game_objs["bricks"]["pos_start"][1] += 1
+		respawn_bricks(game_state, game_timers, game_objs)
+
 	events: list = pygame.event.get()
 	for event in events:
 		if event.type == pygame.QUIT:
@@ -160,9 +164,10 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 			screen_size,
 			game_objs["ball"]["shape"]):
 		consume_live(game_state, game_objs)
-	
+
 	# Se acabar os tijolos
 	if not game_objs["bricks"]["list"]:
+		game_objs["bricks"]["pos_start"][1] = -200
 		respawn_bricks(game_state, game_timers, game_objs)
 	#end_if
 #end_def
