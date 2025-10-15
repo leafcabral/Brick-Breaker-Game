@@ -10,11 +10,10 @@
 - [X] Apertar ↑ ou W para lançar a bola (inicio do jogo e quando perde vida)
 - [X] Sistema de vidas.
 - [X] Novos tijolos quando limpa a tela.
-- [ ] Novos tijolos só são ativados quando bola sai da area.
 
 ## Importantes 
-- [ ] Animação de novos tijolos.
-- [ ] Sistema de níveis.
+- [X] Animação de novos tijolos.
+- [X] Sistema de níveis.
 - [X] Utilizar Vec2D ao invés de tupla.
 - [X] Menu de Iniciar.
 - [X] Menu de Pause.
