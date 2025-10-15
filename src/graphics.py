@@ -152,16 +152,6 @@ def main_menu(screen: dict) -> None:
 		surface.blit(control_text, control_rect)
 	
 	pygame.display.flip()
-	
-	while True:
-		for event in pygame.event.get():
-
-			if event.type == pygame.QUIT:
-				quit()
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_q:
-					quit()
-				if event.key == pygame.K_RETURN: return
 #end_def
 
 def pause_menu(screen: dict) -> None:

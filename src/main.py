@@ -15,25 +15,23 @@ aspectos.
 import pygame 
 import game
 
-import graphics
-
 def main() -> None:
 	pygame.init()
 	
+	# Variaveis do jogo
 	screen: dict = game.new_screen()
 	game_state: dict = game.new_state()
 	game_objs: dict = game.new_objects(screen["surface"].get_size())
 	game_timers: dict = game.new_timers()
 
-	# funcao main menu
-	graphics.main_menu(screen)
-	while game_state["running"]:
-		# Input, timers, movimentos e mais
+	while (not game_state["game_over"]) or game_state["running"]:
+		# Todo o processamento interno do jogo
 		game.process(screen["surface"].get_size(), game_state, game_objs, game_timers)
 	
 		game.render_screen(game_state, screen, game_objs)
 	#end_while
 
+	# TODO: Mostrar também a maior pontuacao
 	print(f"Score: {game_state['score']}")
 	print(f"Level: {game_state['level']}")
 	pygame.quit()

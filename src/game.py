@@ -44,7 +44,8 @@ def new_state(lives: int = 3) -> dict:
 		"lives": lives,
 		"score": 0,
 		"level": 1,
-		"running": True,
+		"main_menu": True,
+		"running": False,
 		"game_over": False,
 		"paused": False,
 		"ball_thrown": False 
@@ -116,12 +117,18 @@ def reset_game(state: dict, objs: dict):
 #end_def
 
 def handle_keydown(events: list, state: dict, objs: dict):
+	if controls.was_pressed("confirm", events) and state["main_menu"]:
+		state["main_menu"] = False
+		state["running"] = True
+		return
+
 	if controls.was_pressed("menu", events):
 		state["paused"] = not state["paused"]
 
 	if controls.was_pressed("quit", events) and \
 			(state["paused"] or state["game_over"]):
 		state["running"] = False
+		state["game_over"] = True
 	if controls.was_pressed("restart", events) and state["game_over"]:
 		#print_stats(state)
 		reset_game(state, objs)
@@ -138,7 +145,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	
 	handle_keydown(events, game_state, game_objs)
 	
-	if game_state["paused"] or game_state["game_over"]:
+	if game_state["paused"] or game_state["game_over"] or game_state["main_menu"]:
 		return
 
 	# Move todas as entidades
@@ -172,15 +179,18 @@ def is_out_of_bounds(ball:dict, screen_size: tuple) -> bool:
 def render_screen(game_state: dict, screen: dict, game_objs: dict):
 	surface: pygame.Surface = screen["surface"]
 
-	surface.fill(screen["bg_color"])
+	if game_state["main_menu"]:
+		graphics.main_menu(screen)
+	else:
+		surface.fill(screen["bg_color"])
 
-	graphics._render_objects(surface, game_objs)
-	graphics._render_texts(surface, game_state)
+		graphics._render_objects(surface, game_objs)
+		graphics._render_texts(surface, game_state)
 
-	if game_state["paused"]:
-		graphics.pause_menu(screen)
-	if game_state["game_over"]:
-		graphics.game_over(screen)
+		if game_state["paused"]:
+			graphics.pause_menu(screen)
+		if game_state["game_over"]:
+			graphics.game_over(screen)
 
 	pygame.display.flip()
 #end_def
