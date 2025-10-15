@@ -3,13 +3,9 @@
 ## Necessário
 - [X] Retirar as variavéis globais.
 
-## **BUGS QUE DEVEM SER EXPURGADOS**
-- Bola quica no canto superior esquerdo = -1 vida
-- Bola quica errado quando encostas em duas no mesmo frame (passa por dentro)
-
 ## Essenciais
 - [X] Direção da bola muda dependendo de onde bater no jogador.
-- [ ] Bola colide corretamente com os tijolos.
+- [X] Bola colide corretamente com os tijolos.
 - [X] Normalizar velocidade da bola.
 - [X] Apertar ↑ ou W para lançar a bola (inicio do jogo e quando perde vida)
 - [X] Sistema de vidas.

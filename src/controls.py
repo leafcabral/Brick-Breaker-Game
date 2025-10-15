@@ -20,8 +20,9 @@ def actions_dict() -> dict:
 		"right": [pygame.K_RIGHT, pygame.K_d],
 		"up": [pygame.K_UP, pygame.K_w],
 		"down": [pygame.K_DOWN, pygame.K_s],
+		"throw": [pygame.K_SPACE],
 
-		"confirm": [pygame.K_RETURN, pygame.K_SPACE],
+		"confirm": [pygame.K_RETURN],
 		"menu": [pygame.K_ESCAPE, pygame.K_p],
 		"quit": [pygame.K_q],
 		"restart": [pygame.K_r]
@@ -76,7 +77,18 @@ def get_action_keys_strings(action: str) -> list:
 	
 	strings: list = []
 	for key in keys:
-		strings.append(pygame.key.name(key).upper())
+		name: str = pygame.key.name(key).upper()
+		if name == "RETURN": name = "ENTER"
+		strings.append(name)
 	
+
 	return strings
+#end_def
+
+def format_action_keys_strings(actions: list) -> str:
+	return "/".join(actions)
+#end_def
+
+def action_to_str(action: str) -> str:
+	return format_action_keys_strings(get_action_keys_strings(action))
 #end_def

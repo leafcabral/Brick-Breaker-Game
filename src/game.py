@@ -159,10 +159,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	elif not start_game(game_objs, events, game_state):
 		return
 
-	# Se bola fora da tela
-	if not utils.is_rect_inside_screen(
-			screen_size,
-			game_objs["ball"]["shape"]):
+	if is_out_of_bounds(game_objs["ball"], screen_size):
 		consume_live(game_state, game_objs)
 
 	# Se acabar os tijolos
@@ -171,6 +168,10 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		respawn_bricks(game_timers, game_objs)
 		game_state["level"] += 1
 	#end_if
+#end_def
+
+def is_out_of_bounds(ball:dict, screen_size: tuple) -> bool:
+	return ball["shape"].centery + ball["radius"] >= screen_size[1]
 #end_def
 
 def render_screen(game_state: dict, screen: dict, game_objs: dict):
@@ -201,7 +202,7 @@ def start_game(game_objs: dict, events: list, game_state: dict) -> bool:
 		if event.type == pygame.QUIT:
 			game_state["running"] = False
 
-	if controls.is_pressed("up"):
+	if controls.is_pressed("up") or controls.is_pressed("throw"):
 		game_state["ball_thrown"] = True
 		return True
 	

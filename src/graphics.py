@@ -12,7 +12,7 @@ globais para escopo de função, modificando as funções, quando necessário, f
 feitos diversas mudanças para deixar o jogo e o código melhor em diversos
 aspectos.
 """
-import pygame, utils
+import pygame, utils, controls
 
 def _render_objects(surface: pygame.Surface, objs: dict):
 	player = objs["player"]
@@ -98,6 +98,7 @@ def main_menu(screen: dict) -> None:
 	title_size: int = 40
 	subtitle_size: int = 28
 	text_size: int = 24
+	control_size: int = 18
 
 	font: pygame.font.Font = pygame.font.Font(utils.get_main_font(), title_size)
 
@@ -115,20 +116,40 @@ def main_menu(screen: dict) -> None:
 
 	font = pygame.font.Font(utils.get_main_font(), text_size)
 
-	text_start = font.render("Press Enter to start game.", True, pygame.Color("white"))
+	text_start = font.render(f"Press {controls.action_to_str("confirm")} to start game.", True, pygame.Color("white"))
 	text_start_rect = text_start.get_rect()
 	text_start_rect.center = screen["rect"].center
 	text_start_rect.centery -= text_size
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_start_rect.center
 	text_exit_rect.centery += text_size + 5
+
+	font = pygame.font.Font(utils.get_main_font(), control_size)
+
+	control_main = font.render("Controls:", True, pygame.Color("white"))
+	control_main_rect = control_main.get_rect()
+	control_main_rect.centerx += 10
+	control_main_rect.centery = surface.get_size()[1] - font.get_linesize() * 6 - 10
 
 	surface.blit(title_text, title_text_rect)
 	surface.blit(subtitle_text, subtitle_text_rect)
 	surface.blit(text_start, text_start_rect)
 	surface.blit(text_exit, text_exit_rect)
+	surface.blit(control_main, control_main_rect)
+
+	controls_texts: list = ["Press ←/→ or A/D to move.", "SPACEBAR or ↑/W to throw.", "ESC or P to pause.", "R to restart on game over.", "Q to quit."]
+	multiple: int = 5
+
+	for text in controls_texts:
+		control_text = font.render(text, True, pygame.Color("white"))
+		control_rect = control_text.get_rect()
+		control_rect.centerx += 10
+		control_rect.centery = surface.get_size()[1] - font.get_linesize() * multiple
+
+		multiple -= 1
+		surface.blit(control_text, control_rect)
 	
 	pygame.display.flip()
 	
@@ -160,12 +181,12 @@ def pause_menu(screen: dict) -> None:
 
 	font = pygame.font.Font(utils.get_main_font(), 24)
 
-	text_unpause = font.render("Press ESC to unpause.", True, pygame.Color("white"))
+	text_unpause = font.render(f"Press {controls.action_to_str("menu")} to unpause.", True, pygame.Color("white"))
 	text_unpause_rect = text_unpause.get_rect()
 	text_unpause_rect.center = screen["rect"].center
 	text_unpause_rect.centery -= font.get_linesize()
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_unpause_rect.center
 	text_exit_rect.centery += font.get_linesize()
@@ -193,12 +214,12 @@ def game_over(screen: dict) ->  None:
 
 	font = pygame.font.Font(utils.get_main_font(), 24)
 
-	text_restart = font.render("Press R to restart.", True, pygame.Color("white"))
+	text_restart = font.render(f"Press {controls.action_to_str("restart")} to restart.", True, pygame.Color("white"))
 	text_restart_rect = text_restart.get_rect()
 	text_restart_rect.center = screen["rect"].center
 	text_restart_rect.centery -= font.get_linesize()
 
-	text_exit = font.render("Press Q to close game.", True, pygame.Color("white"))
+	text_exit = font.render(f"Press {controls.action_to_str("quit")} to close game.", True, pygame.Color("white"))
 	text_exit_rect = text_exit.get_rect()
 	text_exit_rect.center = text_restart_rect.center
 	text_exit_rect.centery += font.get_linesize()
