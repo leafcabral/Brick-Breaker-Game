@@ -84,7 +84,6 @@ def update_timers(game_timer: dict):
 			game_timer[i] -= game_timer["delta"]
 #end_def
 
-
 def consume_live(state: dict, objs: dict):
 	state["lives"] -= 1
 	state["ball_thrown"] = False

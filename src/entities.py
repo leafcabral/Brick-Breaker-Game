@@ -75,7 +75,7 @@ def create_brick_list(bricks: dict):
 	grid: tuple = bricks["grid"]
 	size: tuple = bricks["size"]
 	increment: tuple = bricks["increment"]
-	pos: list = bricks["pos_start"].copy()
+	pos: list = bricks["pos_start"][:]
 
 	bricks["list"] = []
 	
@@ -90,7 +90,7 @@ def create_brick_list(bricks: dict):
 			pos[0] += increment[0]
 		#end_for
 
-		pos[0] = bricks["pos_start"][0]		
+		pos[0] = bricks["pos_start"][0]
 		pos[1] += increment[1]
 	#end_for
 #end_def
@@ -106,6 +106,8 @@ def create_bricks(screen_size: tuple, grid: tuple) -> dict:
 		padding,
 		(screen_size[0] - padding[0]*2, screen_size[1]//3 - padding[1] - 200),
 	)
+	pos_topleft_start: list = valid_area.topleft
+	list(valid_area.topleft)[1] -= valid_area.bottom
 	size: tuple = (
 		(valid_area.width // grid[0]) - spacing,
 		(valid_area.height // grid[1]) - spacing,
@@ -114,7 +116,9 @@ def create_bricks(screen_size: tuple, grid: tuple) -> dict:
 	increment: tuple = (spacing + size[0], spacing + size[1])
 
 	bricks: dict = {
-		"pos_start": list(valid_area.topleft),
+		"pos_start": pos_topleft_start,
+		"pos_topleft": pos_topleft_start[:],
+		"pos_end": list(valid_area.topleft),
 		"size": size,
 		"increment": increment,
 		"grid": grid,
@@ -123,4 +127,14 @@ def create_bricks(screen_size: tuple, grid: tuple) -> dict:
 	create_brick_list(bricks)
 
 	return bricks
+#end_def
+
+def move_bricks(bricks: dict, delta: float):
+	bricks_topleft: tuple = bricks["list"][0].topleft
+	if bricks_topleft == bricks["pos_end"]:
+		return
+	
+	speed: float = 200
+	for brick in bricks["list"]:
+		brick.topleft += speed * delta
 #end_def
