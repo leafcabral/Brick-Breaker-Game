@@ -48,16 +48,18 @@ def move_ball(screen_size: tuple, delta: float, ball: dict):
 	#end_if
 #end_def
 
-def handle_ball_collisions(game_state: dict, game_objs: dict):
+def handle_ball_collisions(game_objs: dict) -> tuple:
 	ball: dict = game_objs["ball"]
-	_handle_player_collision(ball, game_objs["player"])
-	_handle_brick_collisions(game_state, ball, game_objs["bricks"])
+	return (
+		_handle_player_collision(ball, game_objs["player"]),
+		_handle_brick_collisions(ball, game_objs["bricks"])
+	)
 #end_def
 
 	
 #end_def
 
-def _handle_player_collision(ball: dict, player: dict):
+def _handle_player_collision(ball: dict, player: dict) -> bool:
 	ball_shape: pygame.Rect = ball["shape"]
 	player_shape: pygame.Rect = player["shape"]
 
@@ -78,9 +80,11 @@ def _handle_player_collision(ball: dict, player: dict):
 
 		ball["speed"][0] = length * scale * interferenceX
 		ball["speed"][1] = math.sqrt(length**2 - ball["speed"][0]**2) * -1
+		return True
+	return False
 #end_def
 
-def _handle_brick_collisions(game_state: dict, ball: dict, bricks_obj: dict):
+def _handle_brick_collisions(ball: dict, bricks_obj: dict) -> bool:
 	ball_shape: pygame.Rect = ball["shape"]
 	bricks: list = bricks_obj["list"]
 
@@ -100,10 +104,10 @@ def _handle_brick_collisions(game_state: dict, ball: dict, bricks_obj: dict):
 		ball_shape.topleft = ball["previous_pos"][:]
 
 		bricks.remove(brick)
-		game_state["score"] += game_state["level"]
-		break
+		return True
 		#end_if
 	#end_for
+	return False
 #end_def
 
 def _calc_rects_overlap(rect1: pygame.Rect, rect2: pygame.Rect) -> list:

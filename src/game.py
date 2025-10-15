@@ -150,7 +150,9 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	movement.move_bricks(game_objs["bricks"], game_timers["delta"])
 	if game_state["ball_thrown"]:
 		movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
-		movement.handle_ball_collisions(game_state, game_objs)
+		collided: tuple = movement.handle_ball_collisions(game_objs)
+		if collided[1]: # se colidiu com tijolo
+			game_state["score"] += 1 * game_state["level"]
 	elif not start_game(game_objs, events, game_state):
 		return
 
