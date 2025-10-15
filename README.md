@@ -21,9 +21,9 @@ Os integrantes são:
 Apenas baixe os arquivos desse repositório em formato `.zip` e extrai-os em uma pasta
 
 ## Utilização
-Vá para o diretorio do programa e execute o arquivo `game.py` na pasta `src/` ou digite o seguinte na linha de comando:
+Vá para o diretorio do projeto e digite o seguinte na linha de comando:
 ```console
-python src/game.py
+python src/main.py
 ```
 ### Controles
 - `← →`/`A D`: Mover jogador
