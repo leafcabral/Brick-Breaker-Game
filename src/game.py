@@ -94,15 +94,16 @@ def consume_live(state: dict, objs: dict):
 		state["game_over"] = True
 #end_def
 
-def respawn_bricks(timers: dict, objs: dict):
+def respawn_bricks(timers: dict, objs: dict, state: dict):
 	timer_name: str = "brick_respawn"
 	
 	if timer_name not in timers:
-		timers[timer_name] = 0
+		timers[timer_name] = 0.6
 	elif timers[timer_name] <= 0:
 		del timers[timer_name]
 		
 		entities.create_brick_list(objs["bricks"])
+		state["level"] += 1
 	#end_if
 #end_def
 
@@ -129,11 +130,6 @@ def handle_keydown(events: list, state: dict, objs: dict):
 def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: dict) -> None:
 	update_timers(game_timers)
 
-	# Move os tijolos para baixo
-	if game_objs["bricks"]["pos_start"][1] < 50 and not (game_state["paused"] or game_state["game_over"]):
-		game_objs["bricks"]["pos_start"][1] += 1
-		respawn_bricks(game_timers, game_objs)
-
 	events: list = pygame.event.get()
 	for event in events:
 		if event.type == pygame.QUIT:
@@ -151,7 +147,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 		game_timers["delta"],
 		game_objs["player"]
 	)
-
+	movement.move_bricks(game_objs["bricks"], game_timers["delta"])
 	if game_state["ball_thrown"]:
 		movement.move_ball(screen_size, game_timers["delta"], game_objs["ball"])
 		movement.handle_ball_collisions(game_state, game_objs)
@@ -163,9 +159,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 
 	# Se acabar os tijolos
 	if not game_objs["bricks"]["list"]:
-		game_objs["bricks"]["pos_start"][1] = -200
-		respawn_bricks(game_timers, game_objs)
-		game_state["level"] += 1
+		respawn_bricks(game_timers, game_objs, game_state)
 	#end_if
 #end_def
 

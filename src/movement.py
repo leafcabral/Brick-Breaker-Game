@@ -117,3 +117,14 @@ def _calc_rects_overlap(rect1: pygame.Rect, rect2: pygame.Rect) -> list:
 		rect2.bottom - rect1.top,
 	]
 #end_def
+
+
+def move_bricks(bricks: dict, delta: float):
+	if bricks["y_current"] >= bricks["y_end"]:
+		return
+	
+	increase: float = 200 * delta
+	bricks["y_current"] += increase
+	for brick in bricks["list"]:
+		brick["shape"].top += increase
+#end_def
