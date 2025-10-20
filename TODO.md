@@ -24,7 +24,7 @@
 - [ ] Efeito de destruir tijolo.
 
 ## Se sobrar tempo
-- [ ] Colocar efeitos sonoros.
+- [X] Colocar efeitos sonoros.
 - [ ] Linhas CRT (efeito de televisão antiga).
 - [ ] Sinalizar aumento da pontuação (ex.: mostrar +1 por 2 seg).
 - [ ] Particulas de colisão.
