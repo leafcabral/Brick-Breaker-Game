@@ -90,8 +90,9 @@ def consume_live(state: dict, objs: dict):
 
 	if state["lives"] > 0:
 		entities.reset_ball(objs["ball"], objs["player"])
-	else:
+	elif not state["game_over"]:
 		state["game_over"] = True
+		pygame.mixer.Sound(utils.get_asset("sounds", "game_over.wav")).play()
 #end_def
 
 def respawn_bricks(timers: dict, objs: dict, state: dict):
@@ -104,6 +105,7 @@ def respawn_bricks(timers: dict, objs: dict, state: dict):
 		
 		entities.create_brick_list(objs["bricks"])
 		state["level"] += 1
+		pygame.mixer.Sound(utils.get_asset("sounds", "next_level.wav")).play()
 	#end_if
 #end_def
 
@@ -162,7 +164,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	# Se acabar os tijolos
 	if not game_objs["bricks"]["list"]:
 		respawn_bricks(game_timers, game_objs, game_state)
-	#end_if
+		#end_if
 #end_def
 
 def is_out_of_bounds(ball:dict, screen_size: tuple) -> bool:
