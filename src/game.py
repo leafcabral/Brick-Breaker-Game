@@ -93,7 +93,7 @@ def consume_live(state: dict, objs: dict):
 		entities.reset_ball(objs["ball"], objs["player"])
 	elif not state["game_over"]:
 		state["game_over"] = True
-		pygame.mixer.Sound(utils.get_asset("sounds", "game_over.wav")).play()
+		utils.play_sound("game_over.wav")
 #end_def
 
 def respawn_bricks(timers: dict, objs: dict, state: dict):
@@ -106,7 +106,7 @@ def respawn_bricks(timers: dict, objs: dict, state: dict):
 		
 		entities.create_brick_list(objs["bricks"])
 		state["level"] += 1
-		pygame.mixer.Sound(utils.get_asset("sounds", "next_level.wav")).play()
+		utils.play_sound("next_level.wav")
 	#end_if
 #end_def
 
@@ -128,7 +128,7 @@ def handle_keydown(events: list, state: dict, objs: dict):
 		state["paused"] = not state["paused"]
 
 	if controls.was_pressed("quit", events) and \
-			(state["paused"] or state["game_over"]):
+			(not state["running"]):
 		state["running"] = False
 		state["game_over"] = True
 	if controls.was_pressed("restart", events) and state["game_over"]:
@@ -147,7 +147,7 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	
 	handle_keydown(events, game_state, game_objs)
 	
-	if game_state["paused"] or game_state["game_over"] or game_state["main_menu"]:
+	if game_state["paused"] or game_state["game_over"] or game_state["main_menu"] or not game_state["running"]:
 		return
 
 	# Move todas as entidades

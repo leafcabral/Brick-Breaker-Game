@@ -46,7 +46,7 @@ def move_ball(screen_size: tuple, delta: float, ball: dict):
 			ball["speed"][1] *= -1
 			shape.y += ball["speed"][1] * delta
 
-		pygame.mixer.Sound(utils.get_asset("sounds", "hit_wall.wav")).play()
+		utils.play_sound("collision.mp3")
 	#end_if
 #end_def
 
@@ -70,7 +70,6 @@ def _handle_player_collision(ball: dict, player: dict) -> bool:
 		# escala de -1 a 1 quanto a essa distancia
 		hit_position: float = ball_shape.centerx - player_shape.centerx
 		scale: float = hit_position / (float(player_shape.width) / 2)
-		player_collided_sound: pygame.mixer.Sound = pygame.mixer.Sound(utils.get_asset("sounds", "hit.wav"))
 
 		if scale > 1:
 			scale = 1
@@ -83,7 +82,7 @@ def _handle_player_collision(ball: dict, player: dict) -> bool:
 
 		ball["speed"][0] = length * scale * interferenceX
 		ball["speed"][1] = math.sqrt(length**2 - ball["speed"][0]**2) * -1
-		player_collided_sound.play()
+		utils.play_sound("collision_paddle.mp3")
 
 		return True
 	return False
@@ -95,7 +94,6 @@ def _handle_brick_collisions(ball: dict, bricks_obj: dict) -> bool:
 
 	for brick in bricks:
 		brick_shape: pygame.Rect = brick["shape"]
-		brick_breaked_sound: pygame.mixer.Sound = pygame.mixer.Sound(utils.get_asset("sounds", "hit_brick.wav"))
 		
 		overlaps: list = _calc_rects_overlap(ball_shape, brick_shape)
 		if overlaps == None:
@@ -110,7 +108,7 @@ def _handle_brick_collisions(ball: dict, bricks_obj: dict) -> bool:
 		ball_shape.topleft = ball["previous_pos"][:]
 
 		bricks.remove(brick)
-		brick_breaked_sound.play()
+		utils.play_sound("collision.mp3")
 
 		return True
 		#end_if
