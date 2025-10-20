@@ -24,13 +24,14 @@ def main() -> None:
 	game_objs: dict = game.new_objects(screen["surface"].get_size())
 	game_timers: dict = game.new_timers()
 
-	while (not game_state["game_over"]) or game_state["running"]:
+	while game_state["current_state"] != game.GameState.QUIT:
+
 		# Todo o processamento interno do jogo
 		game.process(screen["surface"].get_size(), game_state, game_objs, game_timers)
 	
 		game.render_screen(game_state, screen, game_objs)
 	#end_while
-	
+
 	pygame.quit()
 #end_def
 

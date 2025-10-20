@@ -18,6 +18,15 @@ import entities
 import movement
 import graphics
 import controls
+from enum import Enum
+
+class GameState(Enum):
+	MAIN_MENU = 0,
+	RUNNING = 1,
+	PAUSED = 2,
+	GAME_OVER = 3,
+	QUIT = 4,
+#end_def
 
 def new_screen(width: int = 600, height: int = 600) -> dict:
 	title: str = utils.get_title()
@@ -44,10 +53,7 @@ def new_state(lives: int = 3) -> dict:
 		"lives": lives,
 		"score": 0,
 		"level": 1,
-		"main_menu": True,
-		"running": False,
-		"game_over": False,
-		"paused": False,
+		"current_state": GameState.MAIN_MENU,
 		"ball_thrown": False 
 	}
 #end _def
@@ -91,8 +97,8 @@ def consume_live(state: dict, objs: dict):
 
 	if state["lives"] > 0:
 		entities.reset_ball(objs["ball"], objs["player"])
-	elif not state["game_over"]:
-		state["game_over"] = True
+	elif state["current_state"] != GameState.GAME_OVER:
+		state["current_state"] = GameState.GAME_OVER
 		utils.play_sound("game_over.wav")
 #end_def
 
@@ -119,20 +125,19 @@ def reset_game(state: dict, objs: dict):
 #end_def
 
 def handle_keydown(events: list, state: dict, objs: dict):
-	if controls.was_pressed("confirm", events) and state["main_menu"]:
-		state["main_menu"] = False
-		state["running"] = True
+	if controls.was_pressed("confirm", events)  and state["current_state"] == GameState.MAIN_MENU:
+		state["current_state"] = GameState.RUNNING
 		return
 
 	if controls.was_pressed("menu", events):
-		state["paused"] = not state["paused"]
+		if state["current_state"] == GameState.RUNNING:
+			state["current_state"] = GameState.PAUSED
+		elif state["current_state"] == GameState.PAUSED:
+			state["current_state"] = GameState.RUNNING
 
-	if controls.was_pressed("quit", events) and \
-			(not state["running"]):
-		state["running"] = False
-		state["game_over"] = True
-	if controls.was_pressed("restart", events) and state["game_over"]:
-		#print_stats(state)
+	if controls.was_pressed("quit", events) and state["current_state"] != GameState.RUNNING:
+		state["current_state"] = GameState.QUIT
+	if controls.was_pressed("restart", events) and  state["current_state"] == GameState.GAME_OVER:
 		reset_game(state, objs)
 #end_def
 
@@ -142,12 +147,12 @@ def process(screen_size: tuple, game_state: dict, game_objs: dict, game_timers: 
 	events: list = pygame.event.get()
 	for event in events:
 		if event.type == pygame.QUIT:
-			game_state["running"] = False
+			game_state["current_state"] = GameState.QUIT
 	#end_for
 	
 	handle_keydown(events, game_state, game_objs)
 	
-	if game_state["paused"] or game_state["game_over"] or game_state["main_menu"] or not game_state["running"]:
+	if game_state["current_state"] != GameState.RUNNING:
 		return
 
 	# Move todas as entidades
@@ -181,17 +186,19 @@ def is_out_of_bounds(ball:dict, screen_size: tuple) -> bool:
 def render_screen(game_state: dict, screen: dict, game_objs: dict):
 	surface: pygame.Surface = screen["surface"]
 
-	if game_state["main_menu"]:
+	if game_state["current_state"] == GameState.MAIN_MENU:
 		graphics.main_menu(screen)
+	elif game_state["current_state"] == GameState.QUIT:
+		return
 	else:
 		surface.fill(screen["bg_color"])
 
 		graphics._render_objects(surface, game_objs)
 		graphics._render_texts(surface, game_state)
 
-		if game_state["paused"]:
+		if game_state["current_state"] == GameState.PAUSED:
 			graphics.pause_menu(screen)
-		if game_state["game_over"]:
+		if game_state["current_state"] == GameState.GAME_OVER:
 			graphics.game_over(screen)
 
 	pygame.display.flip()
